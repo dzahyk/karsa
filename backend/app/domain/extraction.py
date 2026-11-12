@@ -16,7 +16,11 @@ from dataclasses import dataclass, field
 
 from .catalog import BY_KEY
 
-EXTRACTOR_VERSION = "demo-rules-1.1"
+EXTRACTOR_VERSION = "demo-rules-1.2"
+# 1.2 (2026-11-12): revised against the dev split and held-out v1 failures only (see docs/eval/EVAL_V2_PROTOCOL.md):
+# prose lead definitions, labelled numbers, k/rb/ribu and number-word budgets, N quarters, numbers inside the lead
+# definition or a historical reference are criteria rather than campaign parameters, budget cues, a principled place
+# list, and broader injection / claim / attach phrasing.
 
 
 @dataclass
@@ -148,52 +152,134 @@ def words_to_int(phrase: str) -> int | None:
     return n if seen and n > 0 else None
 
 
-LEADS = r"(?:qualified\s+|marketing[- ]qualified\s+)?(?:leads?\b|prospek\b|MQLs?\b)"
+LEADS = (r"(?:qualified\s+|marketing[- ]qualified\s+|sales[- ]qualified\s+)?"
+         r"(?:leads?\b|prospek\b|MQLs?\b|SQLs?\b)")
+THOUSANDS = r"(?:k|rb|ribu|thousand)\b"
+Region = tuple[int, int]
 
 
-def _target_leads(text: str) -> ExtractedField:
-    found = []
-    taken: list[tuple[int, int]] = []
+def _amount_k(num: str, unit: str | None) -> int | None:
+    """'1.5k' / '3,5 ribu' → 1500 / 3500; a single [.,] + 1–2 digits before a thousands unit is a decimal."""
+    if not unit:
+        return _int_from(num)
+    dm = re.fullmatch(r"(\d+)(?:[.,](\d{1,2}))?", num)
+    if dm:
+        whole, frac = dm.group(1), dm.group(2) or ""
+        return int(whole) * 1000 + (int(frac) * 1000 // (10 ** len(frac)) if frac else 0)
+    base = _int_from(num)
+    return base * 1000 if base is not None else None
+
+
+def _inside(span: Span, regions: list[Region]) -> bool:
+    return any(a <= span.start < b for a, b in regions)
+
+
+def _prefer_outside(found: list[tuple[str, Span]], regions: list[Region]) -> list[tuple[str, Span]]:
+    """Numbers inside the lead definition or a historical/reference sentence are criteria, not campaign parameters.
+    They are dropped when the brief also states the parameter elsewhere."""
+    outside = [f for f in found if not _inside(f[1], regions)]
+    return outside if outside else found
+
+
+# A label at the start of a line ("Leads: 2,000", "| Leads required | 750 |", "Target lead: 1.800").
+LEAD_LABEL = re.compile(
+    r"^[ \t|•*\-]*(?:target(?:\s+(?:of\s+)?leads?)?|leads?(?:\s+(?:target|required))?|lead\s+target|target\s+lead"
+    r"|jumlah\s+lead|qualified\s+leads)[ \t]*(?:[:：=|]|\.{2,})[ \t.]*(?P<v>[^\n|]+)",
+    _F | re.MULTILINE,
+)
+RANGE = re.compile(rf"(?:between|antara)?\s*(?P<a>{NUM})\s*(?P<ua>{THOUSANDS})?\s*(?:and|dan|to|sampai|-|–|—)\s*"
+                   rf"(?P<b>{NUM})\s*(?P<ub>{THOUSANDS})?", _F)
+
+
+def _target_leads(text: str, criteria: list[Region]) -> ExtractedField:
+    found: list[tuple[str, Span]] = []
+    taken: list[Region] = []
+    for m in LEAD_LABEL.finditer(text):  # labelled value, possibly a range
+        v, off = m.group("v"), m.start("v")
+        r = RANGE.match(v.strip())
+        if r and r.end() > 0 and re.match(r"\s*(?:leads?|prospek)?\s*$", v.strip()[r.end():], _F):
+            lead = off + (len(v) - len(v.lstrip()))
+            for g, u in (("a", "ua"), ("b", "ub")):
+                n = _amount_k(r.group(g), r.group(u))
+                if n:
+                    s, e = lead + r.start(g), lead + r.end(g)
+                    found.append((str(n), Span(s, e, text[s:e])))
+            taken.append((m.start(), m.end()))
+            continue
+        nm = re.match(rf"\s*(?P<n>{NUM})\s*(?P<u>{THOUSANDS})?", v, _F)
+        if nm:
+            n = _amount_k(nm.group("n"), nm.group("u"))
+            if n:
+                s, e = off + nm.start("n"), off + nm.end()
+                found.append((str(n), Span(s, e, text[s:e])))
+                taken.append((m.start(), m.end()))
     rng = re.compile(rf"(?:between|antara)\s+(?P<a>{NUM})\s+(?:and|dan|to|sampai)\s+(?P<b>{NUM})\s*{LEADS}"
                      rf"|(?P<c>{NUM})\s*(?:-|–|to|sampai)\s*(?P<d>{NUM})\s*{LEADS}", _F)
     for m in rng.finditer(text):  # a range is ambiguous: surface both ends as a conflict
+        if _inside(_span(m), taken):
+            continue
         for g in (("a", "b") if m.group("a") else ("c", "d")):
             n = _int_from(m.group(g))
             if n:
                 found.append((str(n), _span(m, g)))
         taken.append((m.start(), m.end()))
-    pat = re.compile(rf"(?P<n>{NUM})\s*{LEADS}", _F)
+    pat = re.compile(rf"(?P<n>{NUM})\s*(?P<u>{THOUSANDS})?\s*{LEADS}", _F)
     for m in pat.finditer(text):
-        if any(a <= m.start() < b for a, b in taken):
+        if _inside(_span(m), taken):
             continue
-        n = _int_from(m.group("n"))
+        n = _amount_k(m.group("n"), m.group("u"))
         if n and n > 0:
             found.append((str(n), _span(m)))
     words = re.compile(rf"\b(?P<w>{WORDS_NUM})\s+{LEADS}", _F)
     for m in words.finditer(text):
+        if _inside(_span(m), taken) or text[: m.start()].rstrip()[-1:].isdigit():  # "3,5 ribu leads"
+            continue
         n = words_to_int(m.group("w"))
         if n:
             found.append((str(n), _span(m)))
-    return _resolve("target_leads", found)
+    return _resolve("target_leads", _prefer_outside(found, criteria))
 
 
-def _budget(text: str) -> ExtractedField:
+BUDGET_CUE = re.compile(
+    r"(?:budget|anggaran|dana|spend|commit|set aside|approved|plafon|cap|ceiling|all[- ]in|total|biaya)", _F)
+NOT_BUDGET_BEFORE = re.compile(
+    r"(?:above|over|more than|at least|minimum|min\.|minimal|di atas|lebih dari|revenue|omzet|bill|tagihan"
+    r"|purchases|turnover|spending)\W*$", _F)
+NOT_BUDGET_AFTER = re.compile(r"^\s*(?:/|per\b|a (?:year|month)|(?:in|of) (?:closed )?revenue|pendapatan)", _F)
+
+
+def _budget(text: str, criteria: list[Region]) -> ExtractedField:
     pat = re.compile(
         rf"(?:Rp\.?|IDR)\s?(?P<n>{NUM})(?:\s*(?P<u>juta|jt|million|mn|miliar|milyar|billion|M\b))?", _F
     )
-    found = []
+    cued, plain = [], []
     for m in pat.finditer(text):
-        tail = text[m.end(): m.end() + 14].lower()
-        if re.match(r"\s*(?:/|per\s)", tail):  # "Rp35.000 per lead" is a rate, not a budget
+        tail = text[m.end(): m.end() + 24]
+        head = text[max(0, m.start() - 24): m.start()]
+        if NOT_BUDGET_AFTER.match(tail) or NOT_BUDGET_BEFORE.search(head):  # rate, threshold or revenue
             continue
-        amount = _amount_with_unit(m.group("n"), m.group("u"))
+        unit = m.group("u")
+        if unit and unit.lower() == "m":  # "IDR 60M" is millions; "Rp1,2M" is miliar (Indonesian usage)
+            whole = _int_from(re.sub(r"[.,]\d{1,2}$", "", m.group("n"))) or 0
+            unit = "million" if whole >= 10 else "miliar"
+        amount = _amount_with_unit(m.group("n"), unit)
         if amount and amount > 0:
-            found.append((str(amount), _span(m)))
+            ctx = text[max(0, m.start() - 40): m.end() + 16]
+            (cued if BUDGET_CUE.search(ctx) else plain).append((str(amount), _span(m)))
+    words = re.compile(rf"\b(?P<w>{WORDS_NUM})\s+(?P<u>million|juta|billion|miliar)\s+(?:rupiah|IDR)\b", _F)
+    for m in words.finditer(text):
+        n = words_to_int(m.group("w"))
+        if n:
+            mult = 10**6 if m.group("u").lower() in ("million", "juta") else 10**9
+            ctx = text[max(0, m.start() - 40): m.end() + 16]
+            (cued if BUDGET_CUE.search(ctx) else plain).append((str(n * mult), _span(m)))
+    found = _prefer_outside(cued, criteria) if cued else _prefer_outside(plain, criteria)
     return _resolve("budget", found)
 
 
-def _timeline(text: str) -> ExtractedField:
-    pat = re.compile(rf"(?P<n>\d{{1,3}}|{WORDS_NUM})\s*(?P<u>weeks?|minggu|months?|bulan|days?|hari)\b", _F)
+def _timeline(text: str, criteria: list[Region]) -> ExtractedField:
+    pat = re.compile(rf"(?P<n>\d{{1,3}}|{WORDS_NUM})\s*-?\s*(?P<u>weeks?|wks?|minggu|months?|bulan|days?|hari)\b",
+                     _F)
     found, notes = [], set()
     for m in pat.finditer(text):
         raw = m.group("n")
@@ -210,21 +296,24 @@ def _timeline(text: str) -> ExtractedField:
         else:
             weeks = n
         found.append((str(weeks), _span(m)))
-    for m in re.finditer(r"\b(?:one|a|1|satu)\s+(?:quarter|kuartal)\b", text, _F):
-        found.append(("13", _span(m)))
-        notes.add("One quarter converted to 13 weeks (demo assumption).")
-    return _resolve("timeline", found, " ".join(sorted(notes)) or None)
+    q = re.compile(r"\b(?P<n>one|a|1|satu|two|2|dua|three|3|tiga|four|4|empat)\s+(?:quarters?|kuartal)\b", _F)
+    for m in q.finditer(text):
+        n = {"one": 1, "a": 1, "satu": 1, "two": 2, "dua": 2, "three": 3, "tiga": 3, "four": 4, "empat": 4}.get(
+            m.group("n").lower()) or int(m.group("n"))
+        found.append((str(13 * n), _span(m)))
+        notes.add("Quarters converted to 13 weeks each (demo assumption).")
+    return _resolve("timeline", _prefer_outside(found, criteria), " ".join(sorted(notes)) or None)
 
 
 OPEN_VALUE = re.compile(
-    r"^(?:tbd|tbc|n/?a|-+|open|to be (?:determined|confirmed|decided)|not (?:yet )?(?:defined|decided|confirmed)"
-    r"|belum\b.*|akan dikonfirmasi.*|unknown)\.?$", _F,
+    r"^(?:(?:tbd|tbc|open)\b.*|n/?a|-+|to be (?:determined|confirmed|decided|agreed|finali[sz]ed|discussed|defined)\b.*"
+    r"|not (?:yet )?(?:defined|decided|confirmed)\b.*|belum\b.*|akan dikonfirmasi.*|unknown)\.?$", _F,
 )
 
 LABELS = {
-    "lead_definition": r"qualified lead definition|lead definition|definisi (?:qualified )?lead|lead criteria"
-                       r"|mql criteria|kriteria lead",
-    "geography": r"geography|geografi|target geography|region|wilayah|target market|lokasi",
+    "lead_definition": r"qualified lead definition|lead definition|definisi (?:qualified )?lead(?: berkualitas)?"
+                       r"|lead criteria|mql criteria|kriteria lead|qualified lead|qualification(?: rule)?",
+    "geography": r"geography|geografi|target geography|region|wilayah|target market|lokasi|area|cakupan wilayah",
     "target_segment": r"target segment|segment|industry|industri|target industry|target audience",
     "reporting": r"reporting|pelaporan|laporan",
     "deliverables": r"deliverables?|channels?|kanal|scope|lingkup",
@@ -232,12 +321,29 @@ LABELS = {
     "constraints": r"constraints?|exclusions?|batasan|pengecualian|restrictions?",
 }
 
-PLACES = (r"Indonesia|Malaysia|Singapore|Singapura|Vietnam|Thailand|Philippines|Filipina|Brunei|Australia|Japan|"
-          r"India|APAC|ASEAN|Southeast Asia|Asia Tenggara|Jakarta|Jabodetabek|Surabaya|Bandung|Medan|Bali|Java|Jawa|"
-          r"Sumatra|Sumatera|Kalimantan|Sulawesi|Yogyakarta|Semarang|Makassar")
-GEO_PHRASE = re.compile(rf"\b(?:{PLACES})\b(?:\s*(?:,|and|dan|&|or|atau)\s*\b(?:{PLACES})\b)*", re.IGNORECASE)
-GEO_CUE = re.compile(r"\b(?:target\w*|focus\w*|in|di|across|wilayah|region|market|pasar|area|located|based)\b",
-                     re.IGNORECASE)
+# Place list rule (1.2): countries/regions as before; all 38 Indonesian provinces (incl. common abbreviations);
+# every provincial capital; Indonesian cities above ~1 million people; and places that appear in the dev split or
+# held-out v1. Nothing was added from held-out v2.
+PLACES = (
+    r"Indonesia|Malaysia|Singapore|Singapura|Vietnam|Thailand|Philippines|Filipina|Brunei|Australia|New Zealand|Japan|"
+    r"India|APAC|ASEAN|Southeast Asia|Asia Tenggara|Manila|Cebu|Kuala Lumpur|Bangkok|"
+    # provinces / islands
+    r"Aceh|Sumatra|Sumatera|Riau|Kepulauan Riau|Kepri|Jambi|Bengkulu|Lampung|Bangka Belitung|Babel|Banten|DKI|Java|"
+    r"Jawa|DIY|Yogyakarta|Jogja|Bali|NTB|NTT|Nusa Tenggara|Kalimantan|Sulawesi|Gorontalo|Maluku|Papua|"
+    # provincial capitals
+    r"Banda Aceh|Medan|Padang|Pekanbaru|Tanjung Pinang|Palembang|Bandar Lampung|Pangkal Pinang|Jakarta|Serang|"
+    r"Bandung|Semarang|Surabaya|Denpasar|Mataram|Kupang|Pontianak|Palangka Raya|Banjarmasin|Banjarbaru|Samarinda|"
+    r"Tanjung Selor|Manado|Palu|Makassar|Kendari|Mamuju|Ambon|Sofifi|Jayapura|Manokwari|Sorong|Merauke|Nabire|"
+    r"Wamena|"
+    # cities above ~1 million
+    r"Bekasi|Tangerang|Depok|Bogor|Batam|Jabodetabek|"
+    # seen in dev / held-out v1
+    r"Cikarang|Karawang|Purwakarta|Sidoarjo|Balikpapan"
+)
+GEO_PHRASE = re.compile(rf"\b(?:{PLACES})\b(?:\s*(?:,|and|dan|&|\+|or|atau)\s*\b(?:{PLACES})\b)*", re.IGNORECASE)
+GEO_CUE = re.compile(r"\b(?:target\w*|focus\w*|in|di|across|wilayah|region|market|pasar|area|located|based|lokasi"
+                     r"|from|dari|among|throughout|seluruh"
+                     r"|leads?|prospek)\b", re.IGNORECASE)  # "wants 3,000 leads, …, Surabaya + Sidoarjo"
 
 
 def _geography(text: str) -> ExtractedField:
@@ -246,13 +352,59 @@ def _geography(text: str) -> ExtractedField:
         return f
     for sentence in re.finditer(r"[^.\n]+", text):  # unlabelled: a place name in a targeting sentence
         s = sentence.group(0)
-        m = GEO_PHRASE.search(s)
-        if m and GEO_CUE.search(s[: m.start()]):
-            start = sentence.start() + m.start()
-            quote = m.group(0)
-            return ExtractedField("geography", "DRAFT", quote, Span(start, start + len(quote), quote),
-                                  "Found in a sentence without a label; confirm it is the target geography.")
+        for m in GEO_PHRASE.finditer(s):
+            if GEO_CUE.search(s[: m.start()]):
+                start = sentence.start() + m.start()
+                quote = m.group(0)
+                return ExtractedField("geography", "DRAFT", quote, Span(start, start + len(quote), quote),
+                                      "Found in a sentence without a label; confirm it is the target geography.")
     return f
+
+
+# Prose lead definitions (1.2). The labelled form ("Lead definition: …") is still tried first.
+DEF_CUE = re.compile(
+    r"\b(?:a |an |the |each |every )?(?:qualified |valid )?(?:lead|SQL|MQL|prospect)s?\s+"
+    r"(?:is|are|means|counts?|qualif(?:y|ies)|must be|should be)\b(?!\s*\d)"
+    r"|\bqualified\s*(?:=|:|when\b|if\b|means\b)"
+    r"|\bconsider\s+(?:a |the )?(?:lead|prospect)s?\s+(?:as\s+)?(?:qualified|valid)"
+    r"|\b(?:lead(?:nya)?|prospek)\s*="
+    r"|\b(?:lead|leads|prospek)(?:\s+yang)?\s+(?:dihitung|dianggap|valid|memenuhi syarat|berkualitas|kami hitung)\b"
+    r"|\b(?:yang )?(?:kami )?(?:hitung|anggap)\s+(?:sebagai\s+)?(?:lead|prospek)\b"
+    r"|\bdihitung\s+(?:sebagai\s+lead\s+)?(?:bila|kalau|jika|apabila)\b"
+    r"|\bkriteria(?:nya|\s+lead)?\s*[:=]",
+    _F,
+)
+SENTENCE_END = re.compile(r"\.(?=\s|$)|\n[ \t]*\n|\n[ \t]*[-•*|]|\n[ \t]*\d+\.\s|\n(?=[A-Z][\w ]{0,30}[:|])")
+
+
+def _sentence_end(text: str, pos: int) -> int:
+    m = SENTENCE_END.search(text, pos)
+    return m.start() if m else len(text)
+
+
+def _lead_definition(text: str) -> tuple[ExtractedField, list[Region]]:
+    f = _labelled(text, "lead_definition")
+    if f.state == "DRAFT" and f.span:
+        return f, [(f.span.start, _sentence_end(text, f.span.end))]
+    if f.span is not None:  # labelled but still open ("to be agreed")
+        return f, []
+    m = DEF_CUE.search(text)
+    if not m:
+        return f, []
+    end = _sentence_end(text, m.end())
+    quote = text[m.start():end].rstrip()
+    span = Span(m.start(), m.start() + len(quote), quote)
+    return (ExtractedField("lead_definition", "DRAFT", quote, span,
+                           "Found as a sentence without a label; confirm this is the full qualification rule."),
+            [(span.start, span.end)])
+
+
+HISTORICAL = re.compile(r"\b(?:last year|previous campaign|tahun lalu|sebelumnya|for reference)\b", _F)
+
+
+def _criteria_regions(text: str, definition: list[Region]) -> list[Region]:
+    """The lead definition plus any historical/reference sentence, from the cue to the end of its sentence."""
+    return definition + [(m.start(), _sentence_end(text, m.end())) for m in HISTORICAL.finditer(text)]
 
 
 def _start_date(text: str) -> ExtractedField:
@@ -270,7 +422,9 @@ def _start_date(text: str) -> ExtractedField:
 
 
 def _labelled(text: str, key: str) -> ExtractedField:
-    pat = re.compile(rf"^[ \t\-•*]*(?:{LABELS[key]})[ \t]*[:：][ \t]*(?P<v>[^\n]+?)[ \t]*$", _F | re.MULTILINE)
+    # 1.2: table rows ("| Qualification rule | … |") use "|" as the separator
+    pat = re.compile(rf"^[ \t\-•*|]*(?:{LABELS[key]})[ \t]*[:：|][ \t]*(?P<v>[^\n|]+?)[ \t|]*$",
+                     _F | re.MULTILINE)
     m = pat.search(text)
     if not m:
         return ExtractedField(key, "MISSING", note="Not found in the brief.")
@@ -298,20 +452,33 @@ INJECTION = re.compile(
     r"ignore (?:all |any )?(?:previous|prior|above) instructions|disregard (?:the )?(?:rules|instructions)"
     r"|abaikan (?:semua )?instruksi|system prompt|you are now"
     r"|approve (?:this |it |the )?(?:proposal |request |offer )?(?:now|immediately)"
-    r"|langsung setujui|auto-?approve",
+    r"|langsung setujui|auto-?approve"
+    # 1.2: rule-override and approval-bypass phrasing seen in held-out v1
+    r"|\bignore\s+(?:\w+\s+){0,4}?(?:rules|instructions|guidelines|checks)\b"
+    r"|\babaikan\s+(?:\w+\s+){0,3}?(?:aturan|instruksi|validasi)\b"
+    r"|\bmark\s+(?:this|it)\b[^.\n]{0,25}\bas\s+approved\b"
+    r"|\b(?:act|acting|bertindak)\s+(?:as|sebagai)\s+(?:the\s+)?approver\b"
+    r"|\b(?:skip|bypass|lewati)\s+(?:the\s+|proses\s+)?(?:human\s+)?review\b"
+    r"|\b(?:note|catatan|pesan)\s+(?:to|untuk)\s+(?:the\s+)?(?:AI|sistem|system|model)\b",
     _F,
 )
 CLAIM = re.compile(
-    r"guarantee(?:d|s)?\b[^.\n]*|dijamin[^.\n]*|menjamin[^.\n]*|\bpasti\s+(?:menghasilkan|mendapat)[^.\n]*"
+    r"guarantee(?:d|s)?\b[^.\n]*|dijamin[^.\n]*|menjamin[^.\n]*"
+    r"|\bpasti\s+(?:menghasilkan|mendapat|mengembalikan)[^.\n]*"
     r"|\d+(?:[.,]\d+)?\s*x\s*(?:ROI|return)|ROI (?:of )?\d+\s*%|\d+\s*%\s*ROI"
     r"|(?:returned|returns?|delivered|generated|menghasilkan)\b[^.\n]{0,30}?\b(?:\d+|two|three|four|five|six|seven|"
-    r"eight|nine|ten|dua|tiga|empat|lima)\s*(?:x|times|kali)\b[^.\n]*",
+    r"eight|nine|ten|dua|tiga|empat|lima)\s*(?:x|times|kali)\b[^.\n]*"
+    # 1.2: payback and projected-revenue phrasing seen in held-out v1
+    r"|\b(?:\w+\s+)?kali lipat\b[^.\n]*|\bpays?\s+for\s+itself\b[^.\n]*|\btimes over\b"
+    r"|\bwill\s+(?:generate|deliver|bring(?: in)?|produce|return)\b[^.]{0,40}?\b(?:revenue|sales|ROI|profit)\b[^.\n]*",
     _F,
 )
-SPEC_DOC = r"(?:spec|specification|scope document|dokumen spesifikasi|SOW|statement of work)"
-ATTACH_VERB = r"(?:attach|lampirkan|lampiran|include|file[ds]?|upload|link|sertakan|simpan)"
+SPEC_DOC = (r"(?:spec(?:ification)?s?|spec\s+sheet|scope(?:\s+(?:doc\w*|document|of work))|dokumen\s+"
+            r"(?:spesifikasi\w*|ruang lingkup|scope)|spesifikasi\w*|SOW|statement of work|requirements?\s+doc\w*)")
+ATTACH_VERB = (r"(?:attach|lampirkan|lampiran|include|file[ds]?|upload|unggah|diunggah|link|sertakan|simpan|put"
+               r"|tambahkan)")
 ATTACH_SPEC = re.compile(
-    rf"\b{ATTACH_VERB}\b[^.\n]{{0,60}}\b{SPEC_DOC}\b|\b{SPEC_DOC}\b[^.\n]{{0,60}}\b{ATTACH_VERB}\b", _F
+    rf"\b{ATTACH_VERB}\b[^.]{{0,60}}\b{SPEC_DOC}\b|\b{SPEC_DOC}\b[^.]{{0,60}}\b{ATTACH_VERB}\b", _F
 )
 
 
@@ -333,11 +500,13 @@ def plan_actions(text: str) -> list[str]:
 
 
 def extract(text: str) -> ExtractionResult:
+    lead_definition, definition_region = _lead_definition(text)
+    criteria = _criteria_regions(text, definition_region)
     fields = {
-        "target_leads": _target_leads(text),
-        "budget": _budget(text),
-        "timeline": _timeline(text),
-        "lead_definition": _labelled(text, "lead_definition"),
+        "target_leads": _target_leads(text, criteria),
+        "budget": _budget(text, criteria),
+        "timeline": _timeline(text, criteria),
+        "lead_definition": lead_definition,
         "geography": _geography(text),
         "target_segment": _labelled(text, "target_segment"),
         "deliverables": _labelled(text, "deliverables"),

@@ -328,7 +328,11 @@ def test_eval_splits_gate_and_adjudication(api, db):
     ds = EvalDataset(slug="b", name="b", version="v1.1", description="d", manifest_hash="x")
     s.add(ds)
     s.flush()
-    for split, cs in (("dev", CASES), ("heldout", CASES_HELDOUT)):
+    # A case whose expectation is deliberately wrong, so the adjudication flow always has a FAIL to work on
+    # (held-out v1 became development data in extractor 1.2 and now passes in full).
+    must_fail = {**CASES_HELDOUT[0], "code": "HO-FAIL", "expected": {
+        **CASES_HELDOUT[0]["expected"], "fields": {**CASES_HELDOUT[0]["expected"]["fields"], "target_leads": "1"}}}
+    for split, cs in (("dev", CASES), ("heldout", [*CASES_HELDOUT, must_fail])):
         for c in cs:
             s.add(EvalCase(dataset_id=ds.id, code=c["code"], split=split, category=c["category"], brief=c["brief"],
                            expected=c["expected"]))
