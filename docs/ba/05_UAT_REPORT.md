@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Build | Karsa at commit `9c3139a`, demo-rules-1.2 extractor, SQLite, simulated connectors |
+| Build | Karsa at commit `a701e92`, demo-rules-1.2 extractor, SQLite, simulated connectors |
 | Data | Seeded synthetic tenants Northstar and Bluepeak (`python -m app.seed`) |
 | Run date | 12 Nov 2026, macOS, Chromium (Playwright) |
 | Executed by | The builder, as **scripted acceptance**: each UAT script is automated by the checks listed in [`04_TRACEABILITY.md`](04_TRACEABILITY.md) |

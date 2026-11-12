@@ -1,7 +1,7 @@
 All checks passed!
 ============================= test session starts ==============================
-platform darwin -- Python 3.12.14, pytest-9.2.0, pluggy-1.7.0 -- /Users/daffakhairy/Documents/Codex/2026-11-11/decisionflow-ai/backend/.venv/bin/python
-rootdir: /Users/daffakhairy/Documents/Codex/2026-11-11/decisionflow-ai/backend
+platform darwin -- Python 3.12.14, pytest-9.2.0, pluggy-1.7.0 -- <repo>/backend/.venv/bin/python
+rootdir: <repo>/backend
 configfile: pyproject.toml
 testpaths: tests
 plugins: anyio-4.16.0
@@ -59,5 +59,5 @@ tests/test_rules_api.py::test_unauthorized_roles_are_denied_and_audited PASSED [
 tests/test_rules_api.py::test_injected_instructions_do_not_change_permissions_or_state PASSED [ 98%]
 tests/test_rules_api.py::test_input_validation_errors_are_helpful PASSED [100%]
 
-- generated xml file: /Users/daffakhairy/Documents/Codex/2026-11-11/decisionflow-ai/docs/ba/evidence/backend-junit.xml -
+- generated xml file: <repo>/docs/ba/evidence/backend-junit.xml -
 ============================== 51 passed in 4.51s ==============================
