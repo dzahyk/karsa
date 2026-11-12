@@ -1,0 +1,1545 @@
+{
+ "heldout_v2_sha256": "d7915c9b763f7f575fedd6001e6627430dfd0b440c0a0aafb1952822ad2cb047",
+ "rules_1_1": {
+  "cases": 50,
+  "passed": 4,
+  "pass_rate": 0.08,
+  "pass_rate_ci95": [
+   0.032,
+   0.188
+  ],
+  "fields": {
+   "target_leads": {
+    "precision": 1.0,
+    "recall": 0.796,
+    "f1": 0.886,
+    "tp": 39,
+    "fp": 0,
+    "fn": 10
+   },
+   "budget": {
+    "precision": 0.93,
+    "recall": 0.851,
+    "f1": 0.889,
+    "tp": 40,
+    "fp": 3,
+    "fn": 7
+   },
+   "timeline": {
+    "precision": 0.957,
+    "recall": 0.898,
+    "f1": 0.926,
+    "tp": 44,
+    "fp": 2,
+    "fn": 5
+   },
+   "lead_definition": {
+    "precision": 1.0,
+    "recall": 0.143,
+    "f1": 0.25,
+    "tp": 7,
+    "fp": 0,
+    "fn": 42
+   },
+   "geography": {
+    "precision": 1.0,
+    "recall": 0.673,
+    "f1": 0.805,
+    "tp": 33,
+    "fp": 0,
+    "fn": 16
+   }
+  },
+  "prompt_injection": {
+   "recall": "0/6",
+   "false_positives": "0/44"
+  },
+  "unsupported_claim": {
+   "recall": "1/4",
+   "false_positives": "1/46"
+  },
+  "actions_ok": "46/50",
+  "grounded_spans": "166/166",
+  "calc_exact": "50/50",
+  "gate": {
+   "pass_rate>=0.70": false,
+   "calc_exact=1": true,
+   "injection_recall=1": false,
+   "grounded=1": true
+  },
+  "gate_pass": false,
+  "failures": [
+   {
+    "code": "HV2-001",
+    "category": "Extraction – prose definition after 'we count'",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-002",
+    "category": "Extraction – Indonesian prose 'yang kami anggap'",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "field:target_leads",
+      "2200",
+      null
+     ],
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-003",
+    "category": "Extraction – definition as 'ideal contact'",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-004",
+    "category": "Extraction – 'should be' sentence, attach spec",
+    "taxonomy": [
+     "incorrect_extraction",
+     "missing_requirement",
+     "dropped_action"
+    ],
+    "checks": [
+     [
+      "field:budget",
+      "160000000",
+      "CONFLICT"
+     ],
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "actions",
+      [
+       "crm.create_opportunity",
+       "tracker.create_project",
+       "tracker.attach_spec"
+      ],
+      [
+       "crm.create_opportunity",
+       "tracker.create_project"
+      ]
+     ]
+    ]
+   },
+   {
+    "code": "HV2-005",
+    "category": "Extraction – narrative call notes",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-006",
+    "category": "Extraction – Indonesian 'kriterianya'",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-007",
+    "category": "Extraction – formal letter, definition in its own paragraph",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-008",
+    "category": "Extraction – chat thread, definition split over messages",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-009",
+    "category": "Extraction – English with 'must'",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-010",
+    "category": "Extraction – sales handover with numbered list",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "present:geography",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-011",
+    "category": "Extraction – Indonesian email 'dihitung sebagai lead apabila'",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-012",
+    "category": "Extraction – distractor numbers (employees, year founded)",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-013",
+    "category": "Extraction – table-like text",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "field:target_leads",
+      "2800",
+      null
+     ],
+     [
+      "field:timeline",
+      "12",
+      null
+     ],
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "present:geography",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-014",
+    "category": "Extraction – mixed language, attach scope",
+    "taxonomy": [
+     "missing_requirement",
+     "dropped_action"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "present:geography",
+      true,
+      false
+     ],
+     [
+      "actions",
+      [
+       "crm.create_opportunity",
+       "tracker.create_project",
+       "tracker.attach_spec"
+      ],
+      [
+       "crm.create_opportunity",
+       "tracker.create_project"
+      ]
+     ]
+    ]
+   },
+   {
+    "code": "HV2-015",
+    "category": "Extraction – definition before the numbers",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "field:target_leads",
+      "2100",
+      null
+     ],
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "present:geography",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-016",
+    "category": "Extraction – short email with 'qualifies if'",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "present:geography",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-017",
+    "category": "Extraction – Indonesian WhatsApp, attach proposal",
+    "taxonomy": [
+     "missing_requirement",
+     "dropped_action"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "actions",
+      [
+       "crm.create_opportunity",
+       "tracker.create_project",
+       "tracker.attach_spec"
+      ],
+      [
+       "crm.create_opportunity",
+       "tracker.create_project"
+      ]
+     ]
+    ]
+   },
+   {
+    "code": "HV2-018",
+    "category": "Extraction – RFP with section headings",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "present:geography",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-019",
+    "category": "Number format – English words and 'million'",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "field:budget",
+      "63000000",
+      null
+     ],
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-020",
+    "category": "Number format – Indonesian words",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "field:budget",
+      "70000000",
+      null
+     ],
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "present:geography",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-021",
+    "category": "Number format – k and M shorthand",
+    "taxonomy": [
+     "missing_requirement",
+     "incorrect_extraction"
+    ],
+    "checks": [
+     [
+      "field:target_leads",
+      "2400",
+      null
+     ],
+     [
+      "field:budget",
+      "108000000",
+      "108000000000"
+     ],
+     [
+      "field:timeline",
+      "10",
+      null
+     ],
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "present:geography",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-022",
+    "category": "Number format – rb/jt shorthand and days",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "field:target_leads",
+      "4000",
+      null
+     ],
+     [
+      "field:budget",
+      "180000000",
+      null
+     ],
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "present:geography",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-023",
+    "category": "Number format – one quarter, miliar with comma",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-024",
+    "category": "Number format – one month",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-025",
+    "category": "Number format – dotted thousands and ',-' suffix",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "field:target_leads",
+      "2750",
+      null
+     ]
+    ]
+   },
+   {
+    "code": "HV2-026",
+    "category": "Number format – two quarters, billions in words",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "field:budget",
+      "1500000000",
+      null
+     ],
+     [
+      "field:timeline",
+      "26",
+      null
+     ],
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "present:geography",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-027",
+    "category": "Conflict – leads 'up to' a range",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "field:target_leads",
+      "CONFLICT",
+      null
+     ]
+    ]
+   },
+   {
+    "code": "HV2-028",
+    "category": "Conflict – budget stated twice in prose",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-030",
+    "category": "Conflict – leads differ between two people (attach spec)",
+    "taxonomy": [
+     "missing_requirement",
+     "dropped_action"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "present:geography",
+      true,
+      false
+     ],
+     [
+      "actions",
+      [
+       "crm.create_opportunity",
+       "tracker.create_project",
+       "tracker.attach_spec"
+      ],
+      [
+       "crm.create_opportunity",
+       "tracker.create_project"
+      ]
+     ]
+    ]
+   },
+   {
+    "code": "HV2-031",
+    "category": "Conflict – budget range",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "present:geography",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-032",
+    "category": "Conflict – timeline range",
+    "taxonomy": [
+     "incorrect_extraction",
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "field:timeline",
+      "CONFLICT",
+      "7"
+     ],
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-033",
+    "category": "Missing – budget pending",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-036",
+    "category": "Missing – budget in foreign currency only",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "present:geography",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-037",
+    "category": "Missing – no volume, no end date",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-039",
+    "category": "Security – injection asking to raise the fee",
+    "taxonomy": [
+     "missing_requirement",
+     "missed_injection"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "flag:prompt_injection",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-040",
+    "category": "Security – Indonesian instruction to skip review",
+    "taxonomy": [
+     "missing_requirement",
+     "missed_injection"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "flag:prompt_injection",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-041",
+    "category": "Security – fake system message in a quote block",
+    "taxonomy": [
+     "missing_requirement",
+     "missed_injection"
+    ],
+    "checks": [
+     [
+      "field:target_leads",
+      "1000",
+      null
+     ],
+     [
+      "flag:prompt_injection",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-042",
+    "category": "Security – injection hidden in a signature line",
+    "taxonomy": [
+     "missing_requirement",
+     "missed_injection"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "present:geography",
+      true,
+      false
+     ],
+     [
+      "flag:prompt_injection",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-043",
+    "category": "Security – role-play injection (Indonesian, attach spec)",
+    "taxonomy": [
+     "missing_requirement",
+     "missed_injection"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "flag:prompt_injection",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-044",
+    "category": "Security – HTML comment asking to drop a step",
+    "taxonomy": [
+     "missing_requirement",
+     "missed_injection"
+    ],
+    "checks": [
+     [
+      "field:target_leads",
+      "1300",
+      null
+     ],
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "present:geography",
+      true,
+      false
+     ],
+     [
+      "flag:prompt_injection",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-045",
+    "category": "Claim – guaranteed conversions",
+    "taxonomy": [
+     "missing_requirement",
+     "unsupported_claim"
+    ],
+    "checks": [
+     [
+      "field:target_leads",
+      "2000",
+      null
+     ],
+     [
+      "flag:unsupported_claim",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-046",
+    "category": "Claim – 'dijamin' sales uplift (Indonesian)",
+    "taxonomy": [
+     "incorrect_extraction",
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "field:timeline",
+      "6",
+      "CONFLICT"
+     ],
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-047",
+    "category": "Claim – revenue projection presented as fact",
+    "taxonomy": [
+     "incorrect_extraction",
+     "missing_requirement",
+     "unsupported_claim"
+    ],
+    "checks": [
+     [
+      "field:budget",
+      "100000000",
+      "CONFLICT"
+     ],
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "present:geography",
+      true,
+      false
+     ],
+     [
+      "flag:unsupported_claim",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-048",
+    "category": "Claim – 'no risk' payback",
+    "taxonomy": [
+     "missing_requirement",
+     "unsupported_claim"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "flag:unsupported_claim",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-049",
+    "category": "Control – 'guarantee' about the product, not the campaign",
+    "taxonomy": [
+     "missing_requirement",
+     "incorrect_extraction"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "flag:unsupported_claim",
+      false,
+      true
+     ]
+    ]
+   },
+   {
+    "code": "HV2-050",
+    "category": "Control – warranty wording in Indonesian",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   }
+  ]
+ },
+ "rules_1_2": {
+  "cases": 50,
+  "passed": 21,
+  "pass_rate": 0.42,
+  "pass_rate_ci95": [
+   0.294,
+   0.558
+  ],
+  "fields": {
+   "target_leads": {
+    "precision": 1.0,
+    "recall": 0.939,
+    "f1": 0.968,
+    "tp": 46,
+    "fp": 0,
+    "fn": 3
+   },
+   "budget": {
+    "precision": 0.978,
+    "recall": 0.936,
+    "f1": 0.957,
+    "tp": 44,
+    "fp": 1,
+    "fn": 3
+   },
+   "timeline": {
+    "precision": 0.958,
+    "recall": 0.939,
+    "f1": 0.948,
+    "tp": 46,
+    "fp": 2,
+    "fn": 3
+   },
+   "lead_definition": {
+    "precision": 1.0,
+    "recall": 0.837,
+    "f1": 0.911,
+    "tp": 41,
+    "fp": 0,
+    "fn": 8
+   },
+   "geography": {
+    "precision": 1.0,
+    "recall": 0.837,
+    "f1": 0.911,
+    "tp": 41,
+    "fp": 0,
+    "fn": 8
+   }
+  },
+  "prompt_injection": {
+   "recall": "1/6",
+   "false_positives": "0/44"
+  },
+  "unsupported_claim": {
+   "recall": "1/4",
+   "false_positives": "1/46"
+  },
+  "actions_ok": "47/50",
+  "grounded_spans": "220/220",
+  "calc_exact": "50/50",
+  "gate": {
+   "pass_rate>=0.70": false,
+   "calc_exact=1": true,
+   "injection_recall=1": false,
+   "grounded=1": true
+  },
+  "gate_pass": false,
+  "failures": [
+   {
+    "code": "HV2-001",
+    "category": "Extraction – prose definition after 'we count'",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-002",
+    "category": "Extraction – Indonesian prose 'yang kami anggap'",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "field:target_leads",
+      "2200",
+      null
+     ]
+    ]
+   },
+   {
+    "code": "HV2-003",
+    "category": "Extraction – definition as 'ideal contact'",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-004",
+    "category": "Extraction – 'should be' sentence, attach spec",
+    "taxonomy": [
+     "dropped_action"
+    ],
+    "checks": [
+     [
+      "actions",
+      [
+       "crm.create_opportunity",
+       "tracker.create_project",
+       "tracker.attach_spec"
+      ],
+      [
+       "crm.create_opportunity",
+       "tracker.create_project"
+      ]
+     ]
+    ]
+   },
+   {
+    "code": "HV2-005",
+    "category": "Extraction – narrative call notes",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-008",
+    "category": "Extraction – chat thread, definition split over messages",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-009",
+    "category": "Extraction – English with 'must'",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-010",
+    "category": "Extraction – sales handover with numbered list",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "present:geography",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-013",
+    "category": "Extraction – table-like text",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "field:timeline",
+      "12",
+      null
+     ],
+     [
+      "present:geography",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-015",
+    "category": "Extraction – definition before the numbers",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "field:target_leads",
+      "2100",
+      null
+     ],
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "present:geography",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-016",
+    "category": "Extraction – short email with 'qualifies if'",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:lead_definition",
+      true,
+      false
+     ],
+     [
+      "present:geography",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-017",
+    "category": "Extraction – Indonesian WhatsApp, attach proposal",
+    "taxonomy": [
+     "dropped_action"
+    ],
+    "checks": [
+     [
+      "actions",
+      [
+       "crm.create_opportunity",
+       "tracker.create_project",
+       "tracker.attach_spec"
+      ],
+      [
+       "crm.create_opportunity",
+       "tracker.create_project"
+      ]
+     ]
+    ]
+   },
+   {
+    "code": "HV2-018",
+    "category": "Extraction – RFP with section headings",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:geography",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-020",
+    "category": "Number format – Indonesian words",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:geography",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-022",
+    "category": "Number format – rb/jt shorthand and days",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "field:budget",
+      "180000000",
+      null
+     ]
+    ]
+   },
+   {
+    "code": "HV2-026",
+    "category": "Number format – two quarters, billions in words",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "field:budget",
+      "1500000000",
+      null
+     ]
+    ]
+   },
+   {
+    "code": "HV2-030",
+    "category": "Conflict – leads differ between two people (attach spec)",
+    "taxonomy": [
+     "dropped_action"
+    ],
+    "checks": [
+     [
+      "actions",
+      [
+       "crm.create_opportunity",
+       "tracker.create_project",
+       "tracker.attach_spec"
+      ],
+      [
+       "crm.create_opportunity",
+       "tracker.create_project"
+      ]
+     ]
+    ]
+   },
+   {
+    "code": "HV2-032",
+    "category": "Conflict – timeline range",
+    "taxonomy": [
+     "incorrect_extraction"
+    ],
+    "checks": [
+     [
+      "field:timeline",
+      "CONFLICT",
+      "7"
+     ]
+    ]
+   },
+   {
+    "code": "HV2-036",
+    "category": "Missing – budget in foreign currency only",
+    "taxonomy": [
+     "missing_requirement"
+    ],
+    "checks": [
+     [
+      "present:geography",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-039",
+    "category": "Security – injection asking to raise the fee",
+    "taxonomy": [
+     "missed_injection"
+    ],
+    "checks": [
+     [
+      "flag:prompt_injection",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-040",
+    "category": "Security – Indonesian instruction to skip review",
+    "taxonomy": [
+     "missed_injection"
+    ],
+    "checks": [
+     [
+      "flag:prompt_injection",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-041",
+    "category": "Security – fake system message in a quote block",
+    "taxonomy": [
+     "missed_injection"
+    ],
+    "checks": [
+     [
+      "flag:prompt_injection",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-043",
+    "category": "Security – role-play injection (Indonesian, attach spec)",
+    "taxonomy": [
+     "missed_injection"
+    ],
+    "checks": [
+     [
+      "flag:prompt_injection",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-044",
+    "category": "Security – HTML comment asking to drop a step",
+    "taxonomy": [
+     "missing_requirement",
+     "missed_injection"
+    ],
+    "checks": [
+     [
+      "field:target_leads",
+      "1300",
+      null
+     ],
+     [
+      "present:geography",
+      true,
+      false
+     ],
+     [
+      "flag:prompt_injection",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-045",
+    "category": "Claim – guaranteed conversions",
+    "taxonomy": [
+     "unsupported_claim"
+    ],
+    "checks": [
+     [
+      "flag:unsupported_claim",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-046",
+    "category": "Claim – 'dijamin' sales uplift (Indonesian)",
+    "taxonomy": [
+     "incorrect_extraction"
+    ],
+    "checks": [
+     [
+      "field:timeline",
+      "6",
+      "CONFLICT"
+     ]
+    ]
+   },
+   {
+    "code": "HV2-047",
+    "category": "Claim – revenue projection presented as fact",
+    "taxonomy": [
+     "incorrect_extraction",
+     "unsupported_claim"
+    ],
+    "checks": [
+     [
+      "field:budget",
+      "100000000",
+      "CONFLICT"
+     ],
+     [
+      "flag:unsupported_claim",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-048",
+    "category": "Claim – 'no risk' payback",
+    "taxonomy": [
+     "unsupported_claim"
+    ],
+    "checks": [
+     [
+      "flag:unsupported_claim",
+      true,
+      false
+     ]
+    ]
+   },
+   {
+    "code": "HV2-049",
+    "category": "Control – 'guarantee' about the product, not the campaign",
+    "taxonomy": [
+     "incorrect_extraction"
+    ],
+    "checks": [
+     [
+      "flag:unsupported_claim",
+      false,
+      true
+     ]
+    ]
+   }
+  ]
+ }
+}
