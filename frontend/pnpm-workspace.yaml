@@ -1,0 +1,2 @@
+allowBuilds:
+  esbuild: true # Vite bundler; the install script only verifies the platform binary

@@ -1,0 +1,15 @@
+.env
+*.db
+*.db-journal
+__pycache__/
+.venv/
+.pytest_cache/
+.ruff_cache/
+node_modules/
+dist/
+frontend/test-results/
+frontend/playwright-report/
+.DS_Store
+*.db-shm
+*.db-wal
+.claude/

@@ -1,0 +1,12 @@
+services:
+  decisionflow:
+    build: .
+    ports: ["8000:8000"]
+    environment:
+      DEMO_MODE: "true"          # one-click demo accounts; set to "false" outside demos
+      COOKIE_SECURE: "false"     # set to "true" behind HTTPS
+      AI_PROVIDER: demo          # "anthropic" + ANTHROPIC_API_KEY to use Claude (costs money)
+      CORS_ORIGINS: http://localhost:8000
+    volumes: ["decisionflow-data:/data"]
+volumes:
+  decisionflow-data:
