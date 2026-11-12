@@ -1,0 +1,259 @@
+$ playwright test --reporter=list,junit
+[WebServer] INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+[WebServer] INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+[WebServer] INFO  [alembic.runtime.migration] Running upgrade  -> 312e45f18170, initial schema
+[WebServer] INFO:     Started server process [57916]
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] INFO:     Application startup complete.
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:8099 (Press CTRL+C to quit)
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_f86fb63e53ea", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 16.8, "user": null}
+
+Running 16 tests using 1 worker
+
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_3158ca575510", "method": "GET", "path": "/api/v1/auth/me", "status": 401, "duration_ms": 1.6, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_8f3af40f2a35", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 1.6, "user": null}
+  ✓   1 [chromium] › e2e/a11y-mobile.spec.ts:19:1 › no serious accessibility violations on the sign-in page (973ms)
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_279191fb7b0b", "method": "POST", "path": "/api/v1/auth/demo-login", "status": 200, "duration_ms": 11.2, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_d1ac517a4a02", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 3.3, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_07f9de2469bd", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 1.7, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_f572aef847ed", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 2.7, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_6ca38aec48a5", "method": "GET", "path": "/api/v1/cases", "status": 200, "duration_ms": 5.0, "user": "u_nadia"}
+  ✓   2 [chromium] › e2e/a11y-mobile.spec.ts:26:3 › no serious accessibility violations on /cases (nadia) (1.4s)
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_856b38e0579b", "method": "POST", "path": "/api/v1/auth/demo-login", "status": 200, "duration_ms": 5.5, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_bd9411796bf1", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 2.6, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_5c1ad816acee", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 3.1, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_1b02d7e07a42", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 3.5, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_802f22236cad", "method": "GET", "path": "/api/v1/cases/DCF-1042", "status": 200, "duration_ms": 37.7, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_0c116a4a7cf5", "method": "GET", "path": "/api/v1/cases/DCF-1042/clarifications", "status": 200, "duration_ms": 3.8, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_179dd796e954", "method": "GET", "path": "/api/v1/cases/DCF-1042/requirements/history", "status": 200, "duration_ms": 3.6, "user": "u_nadia"}
+  ✓   3 [chromium] › e2e/a11y-mobile.spec.ts:26:3 › no serious accessibility violations on /cases/DCF-1042/requirements (nadia) (1.4s)
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_70a5a3d3f671", "method": "POST", "path": "/api/v1/auth/demo-login", "status": 200, "duration_ms": 3.1, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_3aa8b39dfda2", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 1.9, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_ecd81918f66d", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 1.9, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_3f2a93cd7e78", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 2.4, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_6674099ec7f0", "method": "GET", "path": "/api/v1/cases/DCF-1042", "status": 200, "duration_ms": 3.8, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_84191006900c", "method": "GET", "path": "/api/v1/cases/DCF-1042/feasibility", "status": 200, "duration_ms": 3.3, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_007615d8f547", "method": "POST", "path": "/api/v1/cases/DCF-1042/feasibility/preview", "status": 200, "duration_ms": 4.4, "user": "u_nadia"}
+  ✓   4 [chromium] › e2e/a11y-mobile.spec.ts:26:3 › no serious accessibility violations on /cases/DCF-1042/feasibility (nadia) (1.7s)
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_fb1af57d73ab", "method": "POST", "path": "/api/v1/auth/demo-login", "status": 200, "duration_ms": 3.4, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_e4b2adcc8713", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 2.0, "user": "u_arif"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_91bab390a18a", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 2.1, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_e445873b89ee", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 3.1, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_d273619ea618", "method": "GET", "path": "/api/v1/approvals", "status": 200, "duration_ms": 14.4, "user": "u_arif"}
+  ✓   5 [chromium] › e2e/a11y-mobile.spec.ts:26:3 › no serious accessibility violations on /approvals (arif) (1.3s)
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_f217cefe3203", "method": "POST", "path": "/api/v1/auth/demo-login", "status": 200, "duration_ms": 3.6, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_0f0dae8e57aa", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 1.9, "user": "u_arif"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_281484fb7c1d", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 2.4, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_670c3f71fc61", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 2.4, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_ab72886a8b85", "method": "GET", "path": "/api/v1/packages/5", "status": 200, "duration_ms": 8.6, "user": "u_arif"}
+  ✓   6 [chromium] › e2e/a11y-mobile.spec.ts:26:3 › no serious accessibility violations on /approvals/5 (arif) (1.4s)
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_ea2e482608be", "method": "POST", "path": "/api/v1/auth/demo-login", "status": 200, "duration_ms": 4.5, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_e7d94f0bc389", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 2.5, "user": "u_jordan"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_f9277cfb5812", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 2.1, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_b1a228bac502", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 2.7, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_29c4904074d8", "method": "GET", "path": "/api/v1/runs", "status": 200, "duration_ms": 7.5, "user": "u_jordan"}
+  ✓   7 [chromium] › e2e/a11y-mobile.spec.ts:26:3 › no serious accessibility violations on /workflows (jordan) (1.3s)
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_5b817f375156", "method": "POST", "path": "/api/v1/auth/demo-login", "status": 200, "duration_ms": 5.0, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_ca89295e35a3", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 2.3, "user": "u_jordan"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_811ae43843da", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 2.2, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_9f124146d928", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 2.5, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_da2c32bb5402", "method": "GET", "path": "/api/v1/runs/EX-0084", "status": 200, "duration_ms": 5.9, "user": "u_jordan"}
+  ✓   8 [chromium] › e2e/a11y-mobile.spec.ts:26:3 › no serious accessibility violations on /workflows/EX-0084 (jordan) (1.3s)
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_bd84377794f5", "method": "POST", "path": "/api/v1/auth/demo-login", "status": 200, "duration_ms": 3.6, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_7892eb2e36a7", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 2.7, "user": "u_priya"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_857858c1ed8d", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 4.7, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_99fb3071e99a", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 5.5, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_9871d64b07a2", "method": "GET", "path": "/api/v1/evaluations/datasets", "status": 200, "duration_ms": 5.8, "user": "u_priya"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_3284d7b0e974", "method": "GET", "path": "/api/v1/evaluations/runs", "status": 200, "duration_ms": 6.8, "user": "u_priya"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_0c508955f6a9", "method": "GET", "path": "/api/v1/evaluations/runs/1", "status": 200, "duration_ms": 18.1, "user": "u_priya"}
+  ✓   9 [chromium] › e2e/a11y-mobile.spec.ts:26:3 › no serious accessibility violations on /evaluation (priya) (1.4s)
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_4408dbd90819", "method": "POST", "path": "/api/v1/auth/demo-login", "status": 200, "duration_ms": 3.4, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_f6c032a38e20", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 1.9, "user": "u_dewi"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_9202c51c2d2f", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 2.1, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_0a5ad1b4c135", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 2.8, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_e0d95c567fc0", "method": "GET", "path": "/api/v1/impact/summary", "status": 200, "duration_ms": 14.5, "user": "u_dewi"}
+  ✓  10 [chromium] › e2e/a11y-mobile.spec.ts:26:3 › no serious accessibility violations on /impact (dewi) (1.3s)
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_689067353f22", "method": "POST", "path": "/api/v1/auth/demo-login", "status": 200, "duration_ms": 5.3, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_c703c2d6dd4b", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 1.6, "user": "u_lia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_5e111d239e63", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 2.0, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_53548a0911f3", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 3.0, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_7a1284e87c0a", "method": "GET", "path": "/api/v1/audit", "status": 200, "duration_ms": 5.1, "user": "u_lia"}
+  ✓  11 [chromium] › e2e/a11y-mobile.spec.ts:26:3 › no serious accessibility violations on /audit (lia) (1.5s)
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_14e9c47f6baf", "method": "POST", "path": "/api/v1/auth/demo-login", "status": 200, "duration_ms": 4.4, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_a9d23e2d301a", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 1.3, "user": "u_bima"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_c1d496769278", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 1.9, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_822f85061571", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 2.6, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_9b59e66aa129", "method": "GET", "path": "/api/v1/admin/rate-cards", "status": 200, "duration_ms": 3.1, "user": "u_bima"}
+  ✓  12 [chromium] › e2e/a11y-mobile.spec.ts:26:3 › no serious accessibility violations on /manage (bima) (1.2s)
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_ba6aa279d56a", "method": "POST", "path": "/api/v1/auth/demo-login", "status": 200, "duration_ms": 2.1, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_c8503b9147d9", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 1.9, "user": "u_sari"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_747a0ebb931c", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 2.9, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_f63a9aca77fc", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 3.3, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_db7ffd33a1bd", "method": "GET", "path": "/api/v1/approvals", "status": 200, "duration_ms": 7.2, "user": "u_sari"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_db8369e9ab5e", "method": "GET", "path": "/api/v1/packages/5", "status": 200, "duration_ms": 3.4, "user": "u_sari"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_018dcff37bbf", "method": "POST", "path": "/api/v1/packages/5/review", "status": 200, "duration_ms": 8.2, "user": "u_sari"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_694b17332094", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 3.7, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_d686b89b3676", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 4.3, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_b0ac3ac08b8d", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 5.4, "user": "u_sari"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_94ec36209d3b", "method": "GET", "path": "/api/v1/packages/5", "status": 200, "duration_ms": 8.5, "user": "u_sari"}
+  ✓  13 [chromium] › e2e/a11y-mobile.spec.ts:32:1 › mobile second approver completes a high-risk dual approval (1.0s)
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_98b085df5978", "method": "POST", "path": "/api/v1/auth/demo-login", "status": 200, "duration_ms": 3.2, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_5d9c725f46c4", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 1.7, "user": "u_arif"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_bbec2ef4af96", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 1.8, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_7504069b0c43", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 2.2, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_af99ba9ffbf0", "method": "GET", "path": "/api/v1/approvals", "status": 200, "duration_ms": 5.1, "user": "u_arif"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_e1ab17dcef5d", "method": "GET", "path": "/api/v1/packages/3", "status": 200, "duration_ms": 3.2, "user": "u_arif"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_64c8d889544e", "method": "POST", "path": "/api/v1/packages/3/review", "status": 200, "duration_ms": 6.2, "user": "u_arif"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_1f00b4227be3", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 4.1, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_9df59f170453", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 5.1, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_6b23ff8b2565", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 7.1, "user": "u_arif"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_70cf7a43f2b3", "method": "GET", "path": "/api/v1/packages/3", "status": 200, "duration_ms": 8.3, "user": "u_arif"}
+  ✓  14 [chromium] › e2e/a11y-mobile.spec.ts:51:1 › keyboard-only approver can open a package, compare changes and reject it (AC-10) (775ms)
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_c638c06df175", "method": "POST", "path": "/api/v1/auth/demo-login", "status": 200, "duration_ms": 4.6, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_b8815090e2fb", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 2.3, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_0275946233a0", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 2.2, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_a4d4748c6b8a", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 3.2, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_aa9861b56fcc", "method": "GET", "path": "/api/v1/cases", "status": 200, "duration_ms": 4.6, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_6e97ce3e5e40", "method": "GET", "path": "/api/v1/users", "status": 200, "duration_ms": 2.1, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_5606d12de33a", "method": "POST", "path": "/api/v1/cases", "status": 201, "duration_ms": 10.9, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_58f7d3bc7471", "method": "GET", "path": "/api/v1/cases", "status": 200, "duration_ms": 3.4, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_4d72f24a2e7f", "method": "GET", "path": "/api/v1/cases/DCF-2002", "status": 200, "duration_ms": 2.8, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_5264ef7c5f31", "method": "GET", "path": "/api/v1/cases/DCF-2002/requirements/history", "status": 200, "duration_ms": 2.3, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_7dcc4f586fc3", "method": "GET", "path": "/api/v1/cases/DCF-2002/clarifications", "status": 200, "duration_ms": 2.8, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_eb7c8ea90ff9", "method": "PATCH", "path": "/api/v1/cases/DCF-2002/requirements/target_leads", "status": 200, "duration_ms": 4.5, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_f12c17b390f4", "method": "GET", "path": "/api/v1/cases/DCF-2002/clarifications", "status": 200, "duration_ms": 3.0, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_e8887e7cdcb4", "method": "GET", "path": "/api/v1/cases/DCF-2002/requirements/history", "status": 200, "duration_ms": 3.2, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_fa469024bd51", "method": "GET", "path": "/api/v1/cases/DCF-2002", "status": 200, "duration_ms": 4.8, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_eaa198ce8513", "method": "PATCH", "path": "/api/v1/cases/DCF-2002/requirements/budget", "status": 200, "duration_ms": 3.9, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_3fc55825e3c3", "method": "GET", "path": "/api/v1/cases/DCF-2002/clarifications", "status": 200, "duration_ms": 3.2, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_4b8f5a86cd67", "method": "GET", "path": "/api/v1/cases/DCF-2002/requirements/history", "status": 200, "duration_ms": 4.1, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_1884a5cf2525", "method": "GET", "path": "/api/v1/cases/DCF-2002", "status": 200, "duration_ms": 5.9, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_2aa265b22984", "method": "PATCH", "path": "/api/v1/cases/DCF-2002/requirements/timeline", "status": 200, "duration_ms": 3.8, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_05ba644363b4", "method": "GET", "path": "/api/v1/cases/DCF-2002/requirements/history", "status": 200, "duration_ms": 3.6, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_9a702f26f1b0", "method": "GET", "path": "/api/v1/cases/DCF-2002/clarifications", "status": 200, "duration_ms": 4.1, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_821517a02d1c", "method": "GET", "path": "/api/v1/cases/DCF-2002", "status": 200, "duration_ms": 5.3, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_68d2160ffb98", "method": "GET", "path": "/api/v1/cases/DCF-2002/feasibility", "status": 200, "duration_ms": 3.8, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_507601583522", "method": "POST", "path": "/api/v1/cases/DCF-2002/clarifications/suggest", "status": 201, "duration_ms": 3.2, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_5b37565087bb", "method": "GET", "path": "/api/v1/cases/DCF-2002/clarifications", "status": 200, "duration_ms": 1.8, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_7c6c19662be9", "method": "POST", "path": "/api/v1/cases/DCF-2002/clarifications/4/answer", "status": 200, "duration_ms": 5.5, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_dca937dca1db", "method": "GET", "path": "/api/v1/cases/DCF-2002/clarifications", "status": 200, "duration_ms": 3.3, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_7955bf9eb3ce", "method": "GET", "path": "/api/v1/cases/DCF-2002/requirements/history", "status": 200, "duration_ms": 4.1, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_bc0212bdbab3", "method": "GET", "path": "/api/v1/cases/DCF-2002", "status": 200, "duration_ms": 5.1, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_4b94e89ce7cc", "method": "POST", "path": "/api/v1/cases/DCF-2002/clarifications/5/answer", "status": 200, "duration_ms": 4.5, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_c73f09c0c219", "method": "GET", "path": "/api/v1/cases/DCF-2002/clarifications", "status": 200, "duration_ms": 3.8, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_b6aff93d097c", "method": "GET", "path": "/api/v1/cases/DCF-2002/requirements/history", "status": 200, "duration_ms": 4.1, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_fbda08ba8551", "method": "GET", "path": "/api/v1/cases/DCF-2002", "status": 200, "duration_ms": 5.5, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_52afef054b76", "method": "GET", "path": "/api/v1/cases/DCF-2002/feasibility", "status": 200, "duration_ms": 2.1, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_c62099aabae1", "method": "POST", "path": "/api/v1/cases/DCF-2002/feasibility/preview", "status": 200, "duration_ms": 2.5, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_1bc3be1a3a08", "method": "POST", "path": "/api/v1/cases/DCF-2002/feasibility", "status": 201, "duration_ms": 11.4, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_92fc1a52d6fe", "method": "GET", "path": "/api/v1/cases/DCF-2002/feasibility", "status": 200, "duration_ms": 5.8, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_0990c2afa721", "method": "GET", "path": "/api/v1/cases/DCF-2002", "status": 200, "duration_ms": 6.2, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_2ffa9d39708d", "method": "POST", "path": "/api/v1/cases/DCF-2002/packages", "status": 201, "duration_ms": 11.8, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_6579223cba18", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 5.6, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_8c316a29cccc", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 5.9, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_8740820a8225", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 7.6, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_52b6c325a32a", "method": "GET", "path": "/api/v1/cases/DCF-2002/feasibility", "status": 200, "duration_ms": 10.9, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_17ba733512a0", "method": "GET", "path": "/api/v1/packages/10", "status": 200, "duration_ms": 8.9, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_32e06265811b", "method": "POST", "path": "/api/v1/cases/DCF-2002/feasibility/preview", "status": 200, "duration_ms": 16.7, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_6c92b0168a76", "method": "GET", "path": "/api/v1/cases/DCF-2002", "status": 200, "duration_ms": 18.7, "user": "u_nadia"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_af6a37020e4d", "method": "POST", "path": "/api/v1/auth/demo-login", "status": 200, "duration_ms": 1.6, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_d96fd170b442", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 2.5, "user": "u_arif"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_6cd1ad23007e", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 2.1, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_61e3cc18711b", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 2.7, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_7547b1ff8681", "method": "GET", "path": "/api/v1/packages/10", "status": 200, "duration_ms": 4.6, "user": "u_arif"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_a86da6ee1423", "method": "POST", "path": "/api/v1/packages/10/review", "status": 200, "duration_ms": 5.0, "user": "u_arif"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_7bac0925847f", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 2.6, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_65a5ade76c3e", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 3.2, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_bf7f2a794cf7", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 5.1, "user": "u_arif"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_ef04584bf1ac", "method": "GET", "path": "/api/v1/packages/10", "status": 200, "duration_ms": 6.4, "user": "u_arif"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_fcac675fe8d2", "method": "POST", "path": "/api/v1/packages/10/authorize", "status": 200, "duration_ms": 4.9, "user": "u_arif"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_065069045a6f", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 4.4, "user": "u_arif"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_613e2da53087", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 4.5, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_30f7cec0de86", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 5.5, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_f953fec913c1", "method": "GET", "path": "/api/v1/packages/10", "status": 200, "duration_ms": 7.7, "user": "u_arif"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_c67bc8d5990d", "method": "POST", "path": "/api/v1/auth/demo-login", "status": 200, "duration_ms": 4.7, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_8b40d4340762", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 1.9, "user": "u_jordan"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_fb3295e879fd", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 2.4, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_8da6af59acb5", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 7.0, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_bde5de702e52", "method": "GET", "path": "/api/v1/packages/10", "status": 200, "duration_ms": 8.0, "user": "u_jordan"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_7b8399c8df1a", "method": "POST", "path": "/api/v1/packages/10/runs", "status": 202, "duration_ms": 8.5, "user": "u_jordan"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_347aab4ab165", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 3.8, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_1892e969d6d7", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 4.1, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_025e8321830c", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 6.3, "user": "u_jordan"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_33dbfcc1921d", "method": "GET", "path": "/api/v1/packages/10", "status": 200, "duration_ms": 11.6, "user": "u_jordan"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_79b65acd2214", "method": "GET", "path": "/api/v1/runs/EX-0085", "status": 200, "duration_ms": 12.8, "user": "u_jordan"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_28ed22a5fac7", "method": "GET", "path": "/api/v1/runs/EX-0085", "status": 200, "duration_ms": 4.1, "user": "u_jordan"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_2207cd80a8fa", "method": "POST", "path": "/api/v1/runs/EX-0085/steps/tracker.create_project/retry", "status": 200, "duration_ms": 9.5, "user": "u_jordan"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_994b237c5d02", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 4.0, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_14bd90cd89cc", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 4.4, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_8b1d744cec29", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 6.2, "user": "u_jordan"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_9dac2529afdf", "method": "GET", "path": "/api/v1/runs/EX-0085", "status": 200, "duration_ms": 7.7, "user": "u_jordan"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_3bcadb636a83", "method": "GET", "path": "/api/v1/runs/EX-0085", "status": 200, "duration_ms": 6.9, "user": "u_jordan"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_cdbd332de8cc", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 3.4, "user": "u_jordan"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_1da8406a3355", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 10.6, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_cdf3d5e841f1", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 8.6, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_228c34227766", "method": "GET", "path": "/api/v1/cases/DCF-2002", "status": 200, "duration_ms": 13.3, "user": "u_jordan"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_6750a044bc2e", "method": "GET", "path": "/api/v1/cases/DCF-2002/audit", "status": 200, "duration_ms": 4.3, "user": "u_jordan"}
+  ✓  15 [chromium] › e2e/critical-path.spec.ts:19:1 › intake → requirements → clarification → pricing → package → approval → authorization → async sandbox run (11.3s)
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_ee993aa99797", "method": "GET", "path": "/api/v1/auth/me", "status": 401, "duration_ms": 0.7, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_591fdd5d1074", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 1.5, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_be01c7dd921e", "method": "POST", "path": "/api/v1/auth/login", "status": 200, "duration_ms": 24.6, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_98523903720e", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 1.1, "user": "u_priya"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_f88b2d610c0c", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 1.4, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_f9e5a178f9bc", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 1.6, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_ee03ab8b72a9", "method": "GET", "path": "/api/v1/evaluations/runs", "status": 200, "duration_ms": 3.0, "user": "u_priya"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_c560a2ffd033", "method": "GET", "path": "/api/v1/evaluations/datasets", "status": 200, "duration_ms": 2.8, "user": "u_priya"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_147ab7bafa46", "method": "GET", "path": "/api/v1/evaluations/runs/1", "status": 200, "duration_ms": 16.6, "user": "u_priya"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_33560fd1e5a2", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 1.8, "user": "u_priya"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_d201484a2fac", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 1.3, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_e7748fc25e59", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 1.7, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_e6d32ff0776e", "method": "POST", "path": "/api/v1/auth/demo-login", "status": 200, "duration_ms": 4.1, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_7e205c490bb8", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 2.3, "user": "u_omar"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_314ef5d354fa", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 6.7, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_62fd07096614", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 8.7, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_37172a160176", "method": "GET", "path": "/api/v1/cases", "status": 200, "duration_ms": 9.3, "user": "u_omar"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_5fb1cddc3e8d", "method": "GET", "path": "/api/v1/auth/me", "status": 200, "duration_ms": 2.4, "user": "u_omar"}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_cf62a8d67de8", "method": "GET", "path": "/api/v1/auth/demo-accounts", "status": 200, "duration_ms": 5.4, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_164816fa0269", "method": "GET", "path": "/api/v1/health", "status": 200, "duration_ms": 5.7, "user": null}
+[WebServer] {"level": "INFO", "logger": "decisionflow.access", "msg": "request", "request_id": "req_f623338addad", "method": "GET", "path": "/api/v1/cases/DCF-1042", "status": 404, "duration_ms": 8.1, "user": "u_omar"}
+  ✓  16 [chromium] › e2e/critical-path.spec.ts:109:1 › password sign-in, role-based navigation and tenant isolation (866ms)
+
+  16 passed (35.8s)
+<testsuites id="" name="" tests="16" failures="0" skipped="0" errors="0" time="35.83353999999999">
+<testsuite name="a11y-mobile.spec.ts" timestamp="2026-11-12T15:11:03.867Z" hostname="chromium" tests="14" failures="0" skipped="0" time="18.062" errors="0">
+<testcase name="no serious accessibility violations on the sign-in page" classname="a11y-mobile.spec.ts" time="0.973">
+</testcase>
+<testcase name="no serious accessibility violations on /cases (nadia)" classname="a11y-mobile.spec.ts" time="1.407">
+</testcase>
+<testcase name="no serious accessibility violations on /cases/DCF-1042/requirements (nadia)" classname="a11y-mobile.spec.ts" time="1.434">
+</testcase>
+<testcase name="no serious accessibility violations on /cases/DCF-1042/feasibility (nadia)" classname="a11y-mobile.spec.ts" time="1.71">
+</testcase>
+<testcase name="no serious accessibility violations on /approvals (arif)" classname="a11y-mobile.spec.ts" time="1.306">
+</testcase>
+<testcase name="no serious accessibility violations on /approvals/5 (arif)" classname="a11y-mobile.spec.ts" time="1.398">
+</testcase>
+<testcase name="no serious accessibility violations on /workflows (jordan)" classname="a11y-mobile.spec.ts" time="1.268">
+</testcase>
+<testcase name="no serious accessibility violations on /workflows/EX-0084 (jordan)" classname="a11y-mobile.spec.ts" time="1.322">
+</testcase>
+<testcase name="no serious accessibility violations on /evaluation (priya)" classname="a11y-mobile.spec.ts" time="1.365">
+</testcase>
+<testcase name="no serious accessibility violations on /impact (dewi)" classname="a11y-mobile.spec.ts" time="1.336">
+</testcase>
+<testcase name="no serious accessibility violations on /audit (lia)" classname="a11y-mobile.spec.ts" time="1.496">
+</testcase>
+<testcase name="no serious accessibility violations on /manage (bima)" classname="a11y-mobile.spec.ts" time="1.232">
+</testcase>
+<testcase name="mobile second approver completes a high-risk dual approval" classname="a11y-mobile.spec.ts" time="1.04">
+</testcase>
+<testcase name="keyboard-only approver can open a package, compare changes and reject it (AC-10)" classname="a11y-mobile.spec.ts" time="0.775">
+</testcase>
+</testsuite>
+<testsuite name="critical-path.spec.ts" timestamp="2026-11-12T15:11:03.867Z" hostname="chromium" tests="2" failures="0" skipped="0" time="12.184" errors="0">
+<testcase name="intake → requirements → clarification → pricing → package → approval → authorization → async sandbox run" classname="critical-path.spec.ts" time="11.318">
+</testcase>
+<testcase name="password sign-in, role-based navigation and tenant isolation" classname="critical-path.spec.ts" time="0.866">
+</testcase>
+</testsuite>
+</testsuites>

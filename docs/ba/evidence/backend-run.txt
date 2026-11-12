@@ -1,0 +1,63 @@
+All checks passed!
+============================= test session starts ==============================
+platform darwin -- Python 3.12.14, pytest-9.2.0, pluggy-1.7.0 -- /Users/daffakhairy/Documents/Codex/2026-11-11/decisionflow-ai/backend/.venv/bin/python
+rootdir: /Users/daffakhairy/Documents/Codex/2026-11-11/decisionflow-ai/backend
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.16.0
+collecting ... collected 51 items
+
+tests/test_eval_and_migration.py::test_eval_run_scores_all_cases_and_reports_real_failures PASSED [  1%]
+tests/test_eval_and_migration.py::test_alembic_migration_builds_schema PASSED [  3%]
+tests/test_extraction.py::test_every_span_is_a_real_substring_of_the_source PASSED [  5%]
+tests/test_extraction.py::test_aster_brief_extracts_values_and_leaves_gaps_missing PASSED [  7%]
+tests/test_extraction.py::test_conflicting_budget_is_flagged_with_both_sources PASSED [  9%]
+tests/test_extraction.py::test_per_lead_rate_is_not_read_as_budget PASSED [ 11%]
+tests/test_extraction.py::test_instruction_text_is_flagged_as_data PASSED [ 13%]
+tests/test_extraction.py::test_model_output_without_verbatim_quote_is_discarded PASSED [ 15%]
+tests/test_gaps.py::test_password_login_session_and_csrf PASSED          [ 17%]
+tests/test_gaps.py::test_other_tenant_cannot_see_or_touch_cases PASSED   [ 19%]
+tests/test_gaps.py::test_expired_rate_card_blocks_approval_and_execution PASSED [ 21%]
+tests/test_gaps.py::test_clarification_evidence_is_labelled_by_verification PASSED [ 23%]
+tests/test_gaps.py::test_stale_versions_get_409 PASSED                   [ 25%]
+tests/test_gaps.py::test_rejected_case_is_locked_until_reopened PASSED   [ 27%]
+tests/test_gaps.py::test_cancelled_run_lists_compensation_and_case_can_be_reopened PASSED [ 29%]
+tests/test_gaps.py::test_manual_resolution_continues_the_run PASSED      [ 31%]
+tests/test_gaps.py::test_disabled_connector_blocks_authorization PASSED  [ 33%]
+tests/test_gaps.py::test_below_floor_needs_exception_and_two_different_approvers PASSED [ 35%]
+tests/test_gaps.py::test_capacity_blocks_package_and_options_are_compared PASSED [ 37%]
+tests/test_gaps.py::test_pdf_upload_keeps_pages_and_rejects_scans PASSED [ 39%]
+tests/test_gaps.py::test_eml_upload PASSED                               [ 41%]
+tests/test_gaps.py::test_reextract_keeps_human_decisions PASSED          [ 43%]
+tests/test_gaps.py::test_duplicate_delivery_and_lease_expiry_do_not_duplicate_writes PASSED [ 45%]
+tests/test_gaps.py::test_notifications_follow_the_workflow PASSED        [ 47%]
+tests/test_gaps.py::test_exports_carry_the_hash PASSED                   [ 49%]
+tests/test_gaps.py::test_audit_is_append_only_and_traced PASSED          [ 50%]
+tests/test_gaps.py::test_pagination PASSED                               [ 52%]
+tests/test_gaps.py::test_eval_splits_gate_and_adjudication PASSED        [ 54%]
+tests/test_gaps.py::test_brief_text_is_stored_with_hash PASSED           [ 56%]
+tests/test_pricing.py::test_reference_scenario_is_exact PASSED           [ 58%]
+tests/test_pricing.py::test_margin_rounds_half_up_in_basis_points PASSED [ 60%]
+tests/test_pricing.py::test_repeating_decimal_margin PASSED              [ 62%]
+tests/test_pricing.py::test_negative_margin_is_reported_not_hidden PASSED [ 64%]
+tests/test_pricing.py::test_zero_fee_is_rejected_instead_of_dividing_by_zero PASSED [ 66%]
+tests/test_pricing.py::test_invalid_inputs_are_listed_per_field PASSED   [ 68%]
+tests/test_pricing.py::test_large_values_have_no_float_error PASSED      [ 70%]
+tests/test_rules_api.py::test_package_is_blocked_while_critical_requirements_are_missing PASSED [ 72%]
+tests/test_rules_api.py::test_approve_endpoint_rechecks_blockers_on_the_frozen_content PASSED [ 74%]
+tests/test_rules_api.py::test_approval_records_the_exact_snapshot_hash_and_version PASSED [ 76%]
+tests/test_rules_api.py::test_change_after_approval_creates_new_version_and_keeps_old_snapshot PASSED [ 78%]
+tests/test_rules_api.py::test_stale_hash_or_version_gets_409 PASSED      [ 80%]
+tests/test_rules_api.py::test_reject_and_request_changes_need_a_note PASSED [ 82%]
+tests/test_rules_api.py::test_package_author_cannot_review_own_package PASSED [ 84%]
+tests/test_rules_api.py::test_execution_requires_approval_and_separate_authorization PASSED [ 86%]
+tests/test_rules_api.py::test_database_refuses_to_change_frozen_package_content PASSED [ 88%]
+tests/test_rules_api.py::test_tampered_snapshot_still_fails_closed_without_the_trigger PASSED [ 90%]
+tests/test_rules_api.py::test_retry_after_timeout_does_not_duplicate_sandbox_records PASSED [ 92%]
+tests/test_rules_api.py::test_unknown_outcome_blocks_blind_retry_and_reconciles_without_second_write PASSED [ 94%]
+tests/test_rules_api.py::test_unauthorized_roles_are_denied_and_audited PASSED [ 96%]
+tests/test_rules_api.py::test_injected_instructions_do_not_change_permissions_or_state PASSED [ 98%]
+tests/test_rules_api.py::test_input_validation_errors_are_helpful PASSED [100%]
+
+- generated xml file: /Users/daffakhairy/Documents/Codex/2026-11-11/decisionflow-ai/docs/ba/evidence/backend-junit.xml -
+============================== 51 passed in 4.51s ==============================
