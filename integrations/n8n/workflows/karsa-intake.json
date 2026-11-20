@@ -1,0 +1,611 @@
+{
+  "id": "KarsaIntake00001",
+  "name": "Karsa intake",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "karsa-intake",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "0b6f1c2e-1a01-4c3e-9a10-000000000001",
+      "name": "Intake webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "webhookId": "5d2a7f40-8c1b-4b8e-9f3a-6f2d1c0e7a11"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Check the shared secret and the required fields. Nothing is sent to Karsa unless this passes.\nconst req = $input.first().json;\nconst b = req.body || {};\nconst secret = $env.KARSA_INTAKE_SECRET || '';\nconst sent = (req.headers || {})['x-intake-secret'] || '';\nif (!secret || sent !== secret) {\n  return [{ json: { valid: false, unauthorized: true, request_id: null, missing: [], reasons: ['Missing or wrong X-Intake-Secret header.'] } }];\n}\nconst str = (k) => (typeof b[k] === 'string' ? b[k].trim() : '');\nconst missing = ['request_id', 'title', 'client_name', 'brief'].filter((k) => !str(k));\nconst problems = [];\nif (str('request_id') && !/^[A-Za-z0-9._:-]{4,100}$/.test(str('request_id'))) problems.push('request_id may only use letters, digits, \".\", \"_\", \":\" or \"-\" (4-100 characters).');\nif (str('title') && str('title').length < 3) problems.push('title needs at least 3 characters.');\nif (str('client_name') && str('client_name').length < 2) problems.push('client_name needs at least 2 characters.');\nif (str('brief') && str('brief').length < 20) problems.push('brief is under 20 characters, too short to review.');\nconst valid = missing.length === 0 && problems.length === 0;\nreturn [{ json: {\n  valid,\n  unauthorized: false,\n  request_id: str('request_id') || null,\n  source: str('source') || 'webhook',\n  missing,\n  reasons: [...missing.map((m) => `Missing required field: ${m}`), ...problems],\n  case: { title: str('title'), client_name: str('client_name'), brief: typeof b.brief === 'string' ? b.brief : '' },\n  idempotency_key: valid ? `n8n-${str('request_id')}` : null,\n} }];"
+      },
+      "id": "0b6f1c2e-1a01-4c3e-9a10-000000000002",
+      "name": "Validate request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.valid }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "0b6f1c2e-1a01-4c3e-9a10-000000000003",
+      "name": "Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mock notification: append one JSON line to a local file. No email, chat or WhatsApp.\nconst fs = require('fs');\nconst v = $input.first().json;\nconst entry = { at: new Date().toISOString(), channel: 'mock-notify', status: v.unauthorized ? 'rejected_unauthorized' : 'needs_human', stage: 'payload', request_id: v.request_id, case_code: null, reasons: v.reasons };\nfs.appendFileSync('/files/notifications.jsonl', JSON.stringify(entry) + '\\n');\nreturn [{ json: { ...entry, http: v.unauthorized ? 401 : 422 } }];"
+      },
+      "id": "0b6f1c2e-1a01-4c3e-9a10-000000000004",
+      "name": "Needs human: payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: $json.status, request_id: $json.request_id, reasons: $json.reasons }) }}",
+        "options": {
+          "responseCode": "={{ $json.http }}"
+        }
+      },
+      "id": "0b6f1c2e-1a01-4c3e-9a10-000000000005",
+      "name": "Respond: needs human (payload)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.KARSA_API_URL }}/auth/login",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ username: $env.KARSA_USERNAME, password: $env.KARSA_PASSWORD }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          },
+          "timeout": 5000
+        }
+      },
+      "id": "0b6f1c2e-1a01-4c3e-9a10-000000000006",
+      "name": "Karsa: sign in",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        200
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.KARSA_API_URL }}/cases",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Cookie",
+              "value": "={{ ($('Karsa: sign in').last().json.headers['set-cookie'] || []).map(c => c.split(';')[0]).join('; ') }}"
+            },
+            {
+              "name": "X-CSRF-Token",
+              "value": "={{ $('Karsa: sign in').last().json.body.csrf_token }}"
+            },
+            {
+              "name": "Idempotency-Key",
+              "value": "={{ $('Validate request').first().json.idempotency_key }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($('Validate request').first().json.case) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "0b6f1c2e-1a01-4c3e-9a10-000000000007",
+      "name": "Karsa: create draft case",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        160
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.KARSA_API_URL }}/cases/{{ $('Karsa: create draft case').last().json.body.code }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Cookie",
+              "value": "={{ ($('Karsa: sign in').last().json.headers['set-cookie'] || []).map(c => c.split(';')[0]).join('; ') }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 5000
+        }
+      },
+      "id": "0b6f1c2e-1a01-4c3e-9a10-000000000008",
+      "name": "Karsa: read case",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1100,
+        120
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Karsa's own extraction decides what is unclear: critical requirements that are MISSING or\n// CONFLICTING, or a flag such as a possible prompt injection. Either way the case stays a draft.\nconst created = $('Karsa: create draft case').last().json;\nconst detail = $input.first().json;\nconst replay = created.statusCode === 200;\nconst gaps = (detail.requirements || []).filter((r) => r.critical && ['MISSING', 'CONFLICTING'].includes(r.state)).map((r) => `${r.label}: ${r.state.toLowerCase()}`);\nconst flags = (detail.flags || []).map((f) => `Flag: ${f.kind.replace(/_/g, ' ')}`);\nconst reasons = [...gaps, ...flags];\nconst status = replay ? 'already_received' : reasons.length ? 'needs_human' : 'draft_created';\nreturn [{ json: {\n  status,\n  http: replay ? 200 : reasons.length ? 202 : 201,\n  request_id: $('Validate request').first().json.request_id,\n  case_code: detail.code,\n  case_status: detail.status_label,\n  reasons,\n  approval: 'Not requested. Approval happens in Karsa with its own approver rules.',\n} }];"
+      },
+      "id": "0b6f1c2e-1a01-4c3e-9a10-000000000009",
+      "name": "Check for gaps",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.status }}",
+              "value2": "needs_human"
+            }
+          ]
+        }
+      },
+      "id": "0b6f1c2e-1a01-4c3e-9a10-000000000010",
+      "name": "Needs a person?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const fs = require('fs');\nconst v = $input.first().json;\nconst entry = { at: new Date().toISOString(), channel: 'mock-notify', status: 'needs_human', stage: 'review', request_id: v.request_id, case_code: v.case_code, reasons: v.reasons };\nfs.appendFileSync('/files/notifications.jsonl', JSON.stringify(entry) + '\\n');\nreturn [{ json: v }];"
+      },
+      "id": "0b6f1c2e-1a01-4c3e-9a10-000000000011",
+      "name": "Needs human: gaps",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const fs = require('fs');\nconst v = $input.first().json;\nconst entry = { at: new Date().toISOString(), channel: 'mock-notify', status: v.status, stage: 'draft', request_id: v.request_id, case_code: v.case_code, reasons: v.reasons };\nfs.appendFileSync('/files/notifications.jsonl', JSON.stringify(entry) + '\\n');\nreturn [{ json: v }];"
+      },
+      "id": "0b6f1c2e-1a01-4c3e-9a10-000000000012",
+      "name": "Notify: draft logged",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: $json.status, request_id: $json.request_id, case_code: $json.case_code, case_status: $json.case_status, reasons: $json.reasons, approval: $json.approval }) }}",
+        "options": {
+          "responseCode": "={{ $json.http }}"
+        }
+      },
+      "id": "0b6f1c2e-1a01-4c3e-9a10-000000000013",
+      "name": "Respond: case",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1980,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Exponential backoff: 1 s, 2 s, 4 s, then give up. Only connection errors, timeouts, 408, 429\n// and 5xx are retried; any other 4xx from Karsa is a real refusal and goes to a person instead.\nconst MAX_RETRIES = 3;\nconst attempt = $runIndex + 1;\nconst err = $input.first().json.error || $input.first().json || {};\nconst text = JSON.stringify(err);\nconst found = text.match(/\\b(40[0-9]|41[0-9]|42[0-9]|5[0-9]{2})\\b/);\nconst status = Number(err.httpCode || err.status || (found ? found[1] : 0)) || 0;\n// Karsa errors look like {\"error\":{\"code\":...,\"message\":...}}; keep only the readable message.\nconst inner = text.match(/message\\\\*\":\\\\*\"([^\"\\\\]+)/g) || [];\nconst karsaMessage = inner.length > 1 ? inner[inner.length - 1].replace(/^message\\\\*\":\\\\*\"/, '') : null;\nconst transient = status === 0 || status === 408 || status === 429 || status >= 500;\nconst decision = !transient ? 'rejected' : attempt <= MAX_RETRIES ? 'retry' : 'give_up';\nreturn [{ json: {\n  decision,\n  attempt,\n  delay_seconds: 2 ** (attempt - 1),\n  karsa_status: status || null,\n  message: String(karsaMessage || err.message || err.description || 'Karsa did not answer').slice(0, 300),\n} }];"
+      },
+      "id": "0b6f1c2e-1a01-4c3e-9a10-000000000014",
+      "name": "Retry with backoff",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.decision }}",
+              "value2": "retry"
+            }
+          ]
+        }
+      },
+      "id": "0b6f1c2e-1a01-4c3e-9a10-000000000015",
+      "name": "Retry?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1320,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "amount": "={{ $json.delay_seconds }}",
+        "unit": "seconds"
+      },
+      "id": "0b6f1c2e-1a01-4c3e-9a10-000000000016",
+      "name": "Wait (backoff)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1540,
+        340
+      ],
+      "webhookId": "9a1e3b55-2c7d-4f0e-8b6a-3d5c2e1f0a22"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.decision }}",
+              "value2": "rejected"
+            }
+          ]
+        }
+      },
+      "id": "0b6f1c2e-1a01-4c3e-9a10-000000000017",
+      "name": "Refused by Karsa?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const fs = require('fs');\nconst v = $input.first().json;\nconst req = $('Validate request').first().json;\nconst entry = { at: new Date().toISOString(), channel: 'mock-notify', status: 'needs_human', stage: 'refused_by_karsa', request_id: req.request_id, case_code: null, reasons: [`Karsa answered ${v.karsa_status}: ${v.message}`] };\nfs.appendFileSync('/files/notifications.jsonl', JSON.stringify(entry) + '\\n');\nreturn [{ json: { ...entry, http: v.karsa_status === 409 ? 409 : 422 } }];"
+      },
+      "id": "0b6f1c2e-1a01-4c3e-9a10-000000000018",
+      "name": "Needs human: refused",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Dead letter: keep the full request so it can be replayed later with the same Idempotency-Key.\nconst fs = require('fs');\nconst v = $input.first().json;\nconst req = $('Validate request').first().json;\nconst entry = { at: new Date().toISOString(), status: 'dead_letter', attempts: v.attempt, last_error: v.message, request_id: req.request_id, idempotency_key: req.idempotency_key, case: req.case };\nfs.appendFileSync('/files/dead-letter.jsonl', JSON.stringify(entry) + '\\n');\nreturn [{ json: { status: 'dead_letter', request_id: req.request_id, attempts: v.attempt, reasons: [`Karsa unavailable after ${v.attempt} attempts: ${v.message}`], http: 503 } }];"
+      },
+      "id": "0b6f1c2e-1a01-4c3e-9a10-000000000019",
+      "name": "Dead letter",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: $json.status, request_id: $json.request_id, reasons: $json.reasons, attempts: $json.attempts }) }}",
+        "options": {
+          "responseCode": "={{ $json.http }}"
+        }
+      },
+      "id": "0b6f1c2e-1a01-4c3e-9a10-000000000020",
+      "name": "Respond: not created",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1980,
+        540
+      ]
+    }
+  ],
+  "connections": {
+    "Intake webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate request": {
+      "main": [
+        [
+          {
+            "node": "Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid?": {
+      "main": [
+        [
+          {
+            "node": "Karsa: sign in",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Needs human: payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Needs human: payload": {
+      "main": [
+        [
+          {
+            "node": "Respond: needs human (payload)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Karsa: sign in": {
+      "main": [
+        [
+          {
+            "node": "Karsa: create draft case",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Retry with backoff",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Karsa: create draft case": {
+      "main": [
+        [
+          {
+            "node": "Karsa: read case",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Retry with backoff",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Karsa: read case": {
+      "main": [
+        [
+          {
+            "node": "Check for gaps",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Retry with backoff",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check for gaps": {
+      "main": [
+        [
+          {
+            "node": "Needs a person?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Needs a person?": {
+      "main": [
+        [
+          {
+            "node": "Needs human: gaps",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify: draft logged",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Needs human: gaps": {
+      "main": [
+        [
+          {
+            "node": "Respond: case",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify: draft logged": {
+      "main": [
+        [
+          {
+            "node": "Respond: case",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retry with backoff": {
+      "main": [
+        [
+          {
+            "node": "Retry?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retry?": {
+      "main": [
+        [
+          {
+            "node": "Wait (backoff)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Refused by Karsa?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait (backoff)": {
+      "main": [
+        [
+          {
+            "node": "Karsa: sign in",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Refused by Karsa?": {
+      "main": [
+        [
+          {
+            "node": "Needs human: refused",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Dead letter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Needs human: refused": {
+      "main": [
+        [
+          {
+            "node": "Respond: not created",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dead letter": {
+      "main": [
+        [
+          {
+            "node": "Respond: not created",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "active": false
+}

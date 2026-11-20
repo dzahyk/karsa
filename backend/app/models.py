@@ -65,11 +65,15 @@ class Case(Base):
     action_hints: Mapped[list] = mapped_column(JSON, default=list)
     reopen_count: Mapped[int] = mapped_column(Integer, default=0)
     synthetic: Mapped[bool] = mapped_column(Boolean, default=True)
+    # Set when a case arrives through an automated intake (e.g. the n8n workflow) with an Idempotency-Key header,
+    # so a replayed delivery returns the same case instead of creating a second one.
+    intake_key: Mapped[str | None] = mapped_column(String(120), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, index=True)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
 
     owner: Mapped[User] = relationship()
     requirements: Mapped[list[Requirement]] = relationship(back_populates="case", order_by="Requirement.position")
+    __table_args__ = (UniqueConstraint("organization_id", "intake_key", name="uq_cases_org_intake_key"),)
 
 
 class SourceDocument(Base):

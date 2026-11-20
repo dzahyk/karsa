@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import json
+import re
 
-from fastapi import APIRouter, Depends, File, Form, Query, Request, Response, UploadFile
+from fastapi import APIRouter, Depends, File, Form, Header, Query, Request, Response, UploadFile
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import func, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from ..ai.providers import AnthropicProvider, get_provider
@@ -19,6 +21,7 @@ from ..models import (
     AppMeta,
     Artifact,
     AuditEvent,
+    Case,
     DecisionPackage,
     EvalCase,
     EvalDataset,
@@ -38,6 +41,7 @@ from ..security import CSRF_COOKIE, SESSION_COOKIE, SESSION_TTL, create_session,
 from ..services import (
     admin,
     approvals,
+    audit,
     cases,
     connectors,
     execution,
@@ -320,14 +324,50 @@ def _owner(session: Session, u: User, owner_id: str | None) -> User:
     return owner
 
 
+IDEMPOTENCY_KEY = re.compile(r"[A-Za-z0-9._:-]{8,120}")
+
+
+def _intake_replay(session: Session, u: User, key: str, body: CaseIn, response: Response) -> dict | None:
+    """Return the case already created with this Idempotency-Key, or None. Same key + different content is a 409."""
+    c = session.scalar(select(Case).where(Case.organization_id == u.organization_id, Case.intake_key == key))
+    if c is None:
+        return None
+    if (c.title, c.client_name, c.description) != (body.title.strip(), body.client_name.strip(), body.brief):
+        raise DomainError(409, "IDEMPOTENCY_CONFLICT",
+                          "This Idempotency-Key was already used for a different request.",
+                          {"field": "Idempotency-Key", "case": c.code})
+    audit.record(session, u, "case.intake_replayed", "case", c.code,
+                 f"Replayed intake for {c.code}; no new case created.", c.id, {"idempotency_key": key})
+    session.commit()
+    response.status_code = 200
+    response.headers["Idempotent-Replay"] = "true"
+    return S.case_summary(c)
+
+
 @router.post("/cases", status_code=201)
-def create_case(body: CaseIn, session: Session = Depends(get_session), u: User = Depends(actor)):
+def create_case(body: CaseIn, response: Response, session: Session = Depends(get_session), u: User = Depends(actor),
+                idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")):
     require(session, u, "case.create", entity="new case")
+    key = idempotency_key.strip() if idempotency_key is not None else None
+    if key is not None:
+        if not IDEMPOTENCY_KEY.fullmatch(key):
+            raise DomainError(422, "VALIDATION_ERROR",
+                              "Idempotency-Key must be 8-120 characters: letters, digits, '.', '_', ':' or '-'.",
+                              {"field": "Idempotency-Key"})
+        if (replay := _intake_replay(session, u, key, body, response)) is not None:
+            return replay
     owner = _owner(session, u, body.owner_id)
     provider = get_provider(get_settings())
     c = cases.create_case(session, u, title=body.title, client_name=body.client_name, brief=body.brief,
                           owner=owner, extraction=provider.extract(body.brief), provider_label=provider.label)
-    session.commit()
+    c.intake_key = key
+    try:
+        session.commit()
+    except IntegrityError:  # two deliveries with the same key raced; the first one won
+        session.rollback()
+        if key is None or (replay := _intake_replay(session, u, key, body, response)) is None:
+            raise
+        return replay
     return S.case_summary(c)
 
 

@@ -88,6 +88,13 @@ offers one-click sign-in and the header has an account switcher. Set `DEMO_MODE=
 | `bima` | Workspace Admin | Manage (rate cards, connectors, policy, team), Audit |
 | `omar` | Analyst in a **different tenant** | Sees only `DCF-2001` |
 
+## Workflow automation (n8n)
+
+`integrations/n8n/` holds a self-hosted n8n workflow that feeds requests into Karsa: webhook, validation, idempotent
+draft creation (`Idempotency-Key` on `POST /api/v1/cases`), a needs-human branch, retries with exponential backoff and a
+dead letter. It never approves anything. Local only, synthetic payloads; 9 of 9 scenarios pass. See
+[integrations/n8n/README.md](integrations/n8n/README.md).
+
 ## Tests
 
 ```bash
