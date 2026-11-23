@@ -157,6 +157,19 @@ CI runs all of the above (`.github/workflows/ci.yml`).
 - Impact numbers come from a fixed-seed generator: they show the measurement design, not results. No ROI is claimed.
 - Manual screen-reader testing has not been done ([docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md)).
 
+## Contributors
+
+| Contributor | Role | Responsibility |
+|---|---|---|
+| **Daffa Zahy Khairy** ([@dzahyk](https://github.com/dzahyk)) | Author, business analyst, reviewer | The concept and the business analysis (BRD, functional requirements, BPMN, traceability, UAT design, change request); the rules for approval, separation of duties and execution; the evaluation protocol and release gate; reviewing and verifying every result. |
+| **Claude** (Anthropic), used through Claude Code | Implementation and drafting assistant | Implementing the application to the specifications and acceptance criteria I wrote, drafting documents and tests for my review, and checking changes for defects. It decides nothing about scope, rules or what counts as passing. |
+
+**How AI is used here.** AI speeds up the build so that my effort goes to analysis and judgement. The decisions that matter
+are mine and are documented (specification, BRD, evaluation protocol): for example, the held-out evaluation set and the release gate were fixed
+before the extraction rules were rewritten, so the result could not be tuned to flatter itself. The gate failed, and the
+app shows that instead of hiding it. Tests, the evaluation lab and the audit trail, not trust in the assistant, decide
+what is accepted.
+
 ## Documentation
 
 - [docs/IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md) · [docs/PRODUCT_FLOWS.md](docs/PRODUCT_FLOWS.md) ·
