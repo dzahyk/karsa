@@ -5,7 +5,7 @@
 | Document | BRD-KARSA-01, version 1.0, 12 Nov 2026 |
 | Product | Karsa (formerly DecisionFlow AI), portfolio build |
 | Source | *DecisionFlow AI Production Specification v1.0 (DFA-PRD-002)*; a private working spec, not published; rule IDs (BR-, AC-, FR-) are the spec's and are restated here and in 02_FRD.md |
-| Author | Daffa Zahy Khairy (business analysis); built with AI coding agents under the author's direction |
+| Author | Daffa Zahy Khairy (business analysis); built with Claude (via Claude Code) as implementation and drafting assistant under the author's direction |
 | Status | Baseline for the built product. **Not signed off by a real business owner** — all organisations are fictional |
 
 > Everything below describes a fictional B2B lead-generation agency ("Northstar") and synthetic data. No real client,
