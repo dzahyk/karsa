@@ -1,7 +1,7 @@
 # Karsa (formerly DecisionFlow AI) — Implementation Plan
 
 Source of truth: *DecisionFlow AI Production Specification v1.0 (DFA-PRD-002, 11 Nov 2026)*.
-Visual reference: `DecisionFlow_AI_Mockup_Lengkap.zip` (8 screens). This is a portfolio build:
+Visual reference: an 8-screen mockup set (not published). This is a portfolio build:
 all tenants, cases, numbers, and results are **synthetic**.
 
 ## 1. Product understanding

@@ -42,8 +42,11 @@ Say up front: *all data is synthetic; the extractor is a rule-based demo; connec
     now show “Rate card RC-3 is no longer valid” and cannot be authorized until repriced.
 
 ## 9. Is the AI any good? — Priya
-20. Evaluation Lab: **Held-out 1/36** vs **Dev 24/24**, release gate **failed**. Open a failed held-out trace, add an
-    adjudication. Message: the dev score was tuned; the held-out score is the honest one.
+20. Evaluation Lab: **Held-out 21/50** vs **Dev 60/60**, release gate **failed** (pass rate 42% against 70%,
+    prompt-injection recall 1/6). Dev is the 24 original cases plus the 36 v1 held-out cases, which were used to revise
+    the rules; held-out is the v2 set frozen before that revision. Open a failed held-out trace, add an adjudication.
+    Message: the dev score was tuned; the held-out score is the honest one. These scores are for the rule-based
+    extractor; the Claude provider has not been scored.
 
 ## 10. Did it help? — Dewi
 21. Impact: adoption by people and by cases, cycle-time medians with n, insufficient-sample markers, causation caveat,

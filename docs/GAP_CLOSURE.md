@@ -19,16 +19,16 @@ that was run. "Partial" means the demo-scale version is done and the rest needs 
 | 12 | Narrow requirement catalogue | Closed | Added deliverables, start date (date type), constraints | seed + UI |
 | 13 | No options, exception flow or fit-gap | Closed | Options in every package, margin-exception request required below floor, fit-gap against a synthetic service catalogue | `test_below_floor_…`, `test_capacity_…` |
 | 14 | Execution was synchronous | Closed (demo scale) | Transactional outbox + worker (background thread or `python -m app.worker`) with leases; duplicate delivery and crashed-worker re-claim are safe | `test_duplicate_delivery_and_lease_expiry_…`, E2E async run. SQLite has no `SKIP LOCKED`; claims use a compare-and-set |
-| 15 | Claude adapter never run live | **Open — needs your decision** | Adapter ready; Evaluation Lab can score it against the benchmark | Needs an API key and costs money; not run |
+| 15 | Claude adapter never run live | **Open** | Adapter ready; Evaluation Lab can score it against the benchmark | Needs an API key and costs money; deliberately not run |
 | 16 | No exports or notifications | Closed | Package export (Markdown/JSON, with hash), run log JSON, impact CSV; in-app notifications with bell | `test_exports_carry_the_hash`, `test_notifications_…`. No email/Slack |
 | 17 | No management pages | Closed | Rate card versions, connector enable/disable, policy rules, team; global audit page | `test_disabled_connector_blocks_authorization`, E2E axe on `/manage` and `/audit` |
 | 18 | Regex detection easy to miss | Partial | Number words (EN/ID), ranges, quarters/days, unlabelled geography, more claim and attach-spec phrasing | Dev set 24/24 — but see the held-out result below |
-| 19 | Evaluation too small, no gate | Closed (tooling) | +36 held-out briefs written independently and never used for tuning; per-split scores, regressions vs previous run, release gate, human adjudication, provider selector | `test_eval_splits_gate_and_adjudication` |
+| 19 | Evaluation too small, no gate | Closed (tooling) | +36 held-out briefs written independently (v1; later used to revise the rules, so replaced by a new 50-brief held-out set, see below); per-split scores, regressions vs previous run, release gate, human adjudication, provider selector | `test_eval_splits_gate_and_adjudication` |
 | 20 | Adoption measured per case only | Closed | Adoption by people (per month) plus case share; live metrics from the demo DB with "insufficient sample" | Impact page |
 | 21 | Demo data aged | Closed | One-year rate card, freshness banner, `seed --reset` rebuilds schema | `/api/v1/health` |
 | 22 | Audit append-only by convention only | Closed | DB triggers block UPDATE/DELETE on `audit_events`, `approval_records`, and changes to frozen package content; request IDs in responses, logs and audit rows; JSON access logs | `test_audit_is_append_only_and_traced`, `test_database_refuses_…` |
 | 23 | No paging, stale or live states | Closed | Paged case list, "API unavailable — data may be stale" notice, polling of runs/inbox with pause control and screen-reader announcement | `test_pagination`, run page |
-| 24 | No CI, Docker or hosting | Partial | GitHub Actions workflow; single-container Dockerfile + compose — built and smoke-tested locally | CI not run yet (no remote). **Hosting not done — needs your decision** |
+| 24 | No CI, Docker or hosting | Partial | GitHub Actions workflow; single-container Dockerfile + compose — built and smoke-tested locally | CI runs on GitHub Actions (green on main). Hosting: not done (out of scope for the demo) |
 | 25 | Only automated a11y checks | Partial | axe on sign-in + 11 pages, keyboard-only reject flow (AC-10), focus return fixed; manual checklist in `ACCESSIBILITY.md` | Manual screen-reader test not performed (needs a person) |
 
 ## What the held-out set revealed
@@ -39,5 +39,11 @@ that was run. "Partial" means the demo-scale version is done and the rest needs 
 | Held-out (independent) | 36 | 1 | 0.78 | 28 briefs state the lead definition in prose; the rules only read a labelled line |
 
 The release gate **fails** (held-out pass rate, injection recall 2/4). The rules were frozen before the held-out set was
-scored and were not tuned to it. Next step: evaluate the Claude provider on the same set, or rewrite the rules and
-write a *new* held-out set to measure them.
+scored and were not tuned to it.
+
+**Update 2026-11-12:** the rules were revised (1.2) using the dev set and the v1 held-out set above, so v1 is now
+development data. Rules 1.2 were scored once on a new held-out set of 50 briefs, frozen before the revision:
+**21/50** complete-case pass (gate: 70%), prompt-injection recall 1/6; the gate still fails. See
+[docs/eval/EVAL_V2_RESULTS.md](eval/EVAL_V2_RESULTS.md). The seeded Evaluation Lab now shows this v2 result.
+
+All of these numbers are for the rule-based extractor. The Claude provider has not been evaluated on these sets.

@@ -82,7 +82,7 @@ test.describe("desktop", () => {
   test("evaluation lab", async ({ page }) => {
     await as(page, "priya", "/evaluation");
     await shot(page, "10-evaluation-gate", "[aria-label='Split']");
-    await page.getByRole("button", { name: /Dev \(24\)/ }).click();
+    await page.getByRole("button", { name: /^Dev \(\d+\)/ }).click();
     await page.waitForTimeout(300);
     await shot(page, "11-evaluation-dev", "[aria-label='Split']");
   });

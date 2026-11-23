@@ -30,8 +30,8 @@ Then open http://127.0.0.1:8768/.
 ## Honesty
 
 All screenshots come from the real prototype running on synthetic data. The numbers match the
-project docs: 51 backend tests, 16 browser journeys, 12 pages scanned, 60/60 prices, and a held-out
-score of 1/36. The page says it is a portfolio prototype. It claims no clients or business results.
+project docs: 55 backend tests, 16 browser journeys, 12 pages scanned, 60/60 prices, and held-out
+scores of 1/36 (v1) and 21/50 (v2, after a rule rewrite; the gate still fails). The page says it is a portfolio prototype. It claims no clients or business results.
 
 ## Quality checks done
 

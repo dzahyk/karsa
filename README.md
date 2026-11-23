@@ -11,19 +11,22 @@ sources, reviewed by people, and only then executed against sandbox systems with
 
 ⚠️ **Everything here is synthetic.** Organisations, clients, people, rate cards, evaluation data and impact metrics are
 fictional. The CRM and project tracker are **simulated sandboxes**. The default extractor is a **rule-based demo
-parser, not an LLM**. This is not production software.
+parser, not an LLM**. All evaluation numbers in this README are for that rule-based parser; the optional Claude
+provider has not been scored on the benchmark. This is not production software.
 
 **Start here (for reviewers)**
 
 | If you want to see | Open |
 |---|---|
 | The business-analysis pack: BRD, 24 functional requirements, BPMN AS-IS and TO-BE, traceability, UAT report, change request | [docs/ba/](docs/ba/README.md) |
-| The held-out evaluation of the AI step, including the failed release gate | [docs/eval/EVAL_V2_RESULTS.md](docs/eval/EVAL_V2_RESULTS.md) |
+| The held-out evaluation of the extraction step (scored on the rule-based parser; the Claude provider has not been scored), including the failed release gate | [docs/eval/EVAL_V2_RESULTS.md](docs/eval/EVAL_V2_RESULTS.md) |
 | The n8n intake workflow and its 9 scenario results | [integrations/n8n/](integrations/n8n/README.md) · [RESULTS.md](integrations/n8n/RESULTS.md) |
 | Screenshots of every screen | [docs/portfolio/screenshots/](docs/portfolio/screenshots/) |
 | The case study (what I built, what is not proven yet) | https://dzahyk.github.io/case-karsa.html |
 
-Built from *DecisionFlow AI Production Specification v1.0 (DFA-PRD-002)* and the 8-screen mockup set.
+Built from *DecisionFlow AI Production Specification v1.0 (DFA-PRD-002)* and an 8-screen mockup set, both private working
+documents that are not published here. The rule IDs they define (BR-, AC-, FR-) are restated in the
+[BRD](docs/ba/01_BRD.md), the [FRD](docs/ba/02_FRD.md) and [docs/PRODUCT_FLOWS.md](docs/PRODUCT_FLOWS.md).
 Gap review and closure: [docs/GAP_CLOSURE.md](docs/GAP_CLOSURE.md).
 
 ## What it does, and how
@@ -38,7 +41,7 @@ with a rule that can say no: **Intake → Requirements → Feasibility → Decis
 </tr>
 <tr>
 <td width="50%"><img src="docs/portfolio/screenshots/08-execution-unknown-outcome.png" alt="Execution with an unknown outcome"><br><sub><b>Execution and recovery.</b> When the sandbox tracker times out, the outcome is "unknown", blind retry is disabled, and the operator checks the target by idempotency key.</sub></td>
-<td width="50%"><img src="docs/portfolio/screenshots/10-evaluation-gate.png" alt="Evaluation lab showing a failed release gate"><br><sub><b>Evaluation lab.</b> The AI step is scored on a held-out set it was not tuned on. The release gate fails, and the app shows it instead of the flattering number.</sub></td>
+<td width="50%"><img src="docs/portfolio/screenshots/10-evaluation-gate.png" alt="Evaluation lab showing a failed release gate"><br><sub><b>Evaluation lab.</b> The extraction step (currently the rule-based parser) is scored on a held-out set it was not tuned on. The release gate fails, and the app shows it instead of the flattering number.</sub></td>
 </tr>
 </table>
 
@@ -53,7 +56,7 @@ with a rule that can say no: **Intake → Requirements → Feasibility → Decis
 | **Exception queue** | Keeps failures visible until a person resolves them. | Escalate, resolve manually, cancel with a compensation list, or reopen. |
 | **n8n intake workflow** | Creates a draft case from an external request. | A webhook checks a shared secret and required fields, then calls the Karsa API with an idempotency key, retries with backoff and keeps a dead-letter queue. 9 of 9 scenario tests pass ([results](integrations/n8n/RESULTS.md)). It never auto-approves. |
 | **Audit** | A permanent record of who did what. | Append-only at the database level (triggers), with request IDs that match the server logs. |
-| **Evaluation lab** | Measures the AI step honestly. | A development split and a separate held-out split, a release gate, regressions and adjudication. Results so far: 24 of 24 on the cases the rules were written on, 1 of 36 on new ones, 21 of 50 after a rewrite; the gate fails ([report](docs/eval/EVAL_V2_RESULTS.md)). |
+| **Evaluation lab** | Measures the extraction step honestly (so far only the rule-based parser; Claude has not been run against it). | A development split and a separate held-out split, a release gate, regressions and adjudication. Results so far: 24 of 24 on the cases the rules were written on, 1 of 36 on new ones, 21 of 50 after a rewrite; the gate fails ([report](docs/eval/EVAL_V2_RESULTS.md)). |
 
 ## What works
 
@@ -109,11 +112,11 @@ cd backend && uv run python -m app.seed --reset
 docker compose up --build
 ```
 
-Then open http://localhost:8000. Data lives in the `decisionflow-data` volume.
+Then open http://localhost:8000. Data lives in the `decisionflow-data` volume (the name is kept from the project's former name).
 
 ## Demo accounts
 
-Shared password for every synthetic account: **`decisionflow-demo`**. With `DEMO_MODE=true` the sign-in page also
+Shared password for every synthetic account: **`decisionflow-demo`** (also kept from the former name). With `DEMO_MODE=true` the sign-in page also
 offers one-click sign-in and the header has an account switcher. Set `DEMO_MODE=false` to disable both.
 
 | Username | Role | Main screens |
@@ -137,7 +140,7 @@ dead letter. It never approves anything. Local only, synthetic payloads; 9 of 9 
 ## Tests
 
 ```bash
-cd backend && uv run ruff check . && uv run pytest -q -p no:logging       # 51 tests
+cd backend && uv run ruff check . && uv run pytest -q -p no:logging       # 55 tests
 ```
 
 ```bash
@@ -152,8 +155,10 @@ CI runs all of the above (`.github/workflows/ci.yml`).
 - Authentication is local username/password; no SSO/OIDC/MFA, no password reset, no account management UI.
 - SQLite by default; the outbox claim is compare-and-set rather than `SELECT … FOR UPDATE SKIP LOCKED`.
 - Connectors and failures are simulated. Notifications are in-app only.
-- The demo extractor passes its 24 dev cases but only **1 of 36 held-out cases**; the release gate fails. See
-  [docs/GAP_CLOSURE.md](docs/GAP_CLOSURE.md).
+- The rule-based demo extractor passed its 24 dev cases but only **1 of 36** held-out cases (v1). After a rewrite
+  using dev and v1, it passes **21 of 50** briefs (42%) on a new held-out set (v2), below the 70% gate, and catches 1 of
+  6 prompt injections. The release gate still fails. See [docs/eval/EVAL_V2_RESULTS.md](docs/eval/EVAL_V2_RESULTS.md)
+  and [docs/GAP_CLOSURE.md](docs/GAP_CLOSURE.md).
 - Impact numbers come from a fixed-seed generator: they show the measurement design, not results. No ROI is claimed.
 - Manual screen-reader testing has not been done ([docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md)).
 

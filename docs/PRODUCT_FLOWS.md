@@ -1,6 +1,6 @@
 # Product flows and business rules
 
-All data is synthetic. Rule IDs refer to the specification (DFA-PRD-002 §2.4).
+All data is synthetic. Rule IDs refer to the specification (DFA-PRD-002 §2.4), which is not published; each rule is restated below.
 
 ## Personas → what they do in the app
 
@@ -42,7 +42,7 @@ Case status is derived on the server from requirements, packages, authorizations
 | Untrusted documents | Instruction-like text is flagged and audited; it changes no state or permission. Claude output is discarded unless its quote is found verbatim in the brief. | `test_injected_instructions_do_not_change_permissions_or_state`, `test_model_output_without_verbatim_quote_is_discarded` |
 | Deterministic pricing (BR-002, AC-03) | `variable = target × unit`, `total = variable + fixed`, `margin = (fee − total) / fee`; integer rupiah, Decimal, basis points, half-up. Fee 0 is rejected instead of dividing by zero. | `tests/test_pricing.py` |
 | Package blocked when incomplete (BR-001) | A package cannot be frozen while a critical requirement is not CONFIRMED, pricing is invalid, the rate card is outside its validity window, or the pricing target differs from the confirmed requirement. The approve endpoint re-checks the frozen content. | `test_package_is_blocked_…`, `test_approve_endpoint_rechecks_blockers_…` |
-| Snapshot integrity (BR-003, AC-04) | Approval stores the package hash and version; stale hash/version → 409. Execution recomputes the hash and fails closed on mismatch. | `test_approval_records_the_exact_snapshot…`, `test_stale_hash…`, `test_tampered_snapshot_fails_closed` |
+| Snapshot integrity (BR-003, AC-04) | Approval stores the package hash and version; stale hash/version → 409. Execution recomputes the hash and fails closed on mismatch. | `test_approval_records_the_exact_snapshot…`, `test_stale_hash…`, `test_tampered_snapshot_still_fails_closed_without_the_trigger` |
 | Change after approval (BR-004) | Editing a requirement or saving different pricing supersedes the active package. The old snapshot and approval record remain unchanged; a new version needs a new review. | `test_change_after_approval_creates_new_version…` |
 | Approval ≠ execution | Approving creates no external effect. Execution needs a separate authorization, where the approver confirms each action. | `test_execution_requires_approval_and_separate_authorization` |
 | Idempotent retry (BR-007, AC-05) | Each write step has a stable idempotency key; the sandbox has a unique constraint; replays return the existing record. | `test_retry_after_timeout_does_not_duplicate…` |

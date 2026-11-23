@@ -21,6 +21,7 @@ from .domain.extraction import extract
 from .domain.hashing import content_hash
 from .evaluation import dataset as eval_ds
 from .evaluation import heldout as eval_heldout
+from .evaluation import heldout_v2 as eval_heldout_v2
 from .evaluation import runner
 from .models import AppMeta, Connector, EvalCase, EvalDataset, ImpactCohortCase, Organization, RateCard, User
 from .security import hash_password
@@ -347,11 +348,14 @@ def seed() -> None:
     set_clock_offset(timedelta(0))
     s.commit()
 
-    # Evaluation dataset (dev + independent held-out split) + one real run
-    all_cases = [(c, "dev") for c in eval_ds.CASES] + [(c, "heldout") for c in eval_heldout.CASES_HELDOUT]
-    ds = EvalDataset(slug=eval_ds.SLUG, name=eval_ds.NAME, version="v1.1",
-                     description=eval_ds.DESCRIPTION + " v1.1 adds 36 held-out briefs written independently and never "
-                                 "used to tune the rules.",
+    # Evaluation dataset + one real run. The v1 held-out briefs were used to revise the rules (1.2), so they now
+    # count as dev; the held-out split is v2, frozen before that revision (docs/eval/EVAL_V2_PROTOCOL.md).
+    all_cases = ([(c, "dev") for c in eval_ds.CASES] + [(c, "dev") for c in eval_heldout.CASES_HELDOUT]
+                 + [(c, "heldout") for c in eval_heldout_v2.CASES])
+    ds = EvalDataset(slug=eval_ds.SLUG, name=eval_ds.NAME, version="v2",
+                     description=eval_ds.DESCRIPTION + " v2 moves the 36 v1 held-out briefs to dev (they were used to "
+                                 "revise the rules to 1.2) and adds 50 new held-out briefs frozen before that revision "
+                                 "(see docs/eval/EVAL_V2_PROTOCOL.md).",
                      manifest_hash=content_hash({"cases": [c for c, _ in all_cases]}))
     s.add(ds)
     s.flush()
