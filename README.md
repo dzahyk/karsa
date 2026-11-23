@@ -26,6 +26,35 @@ parser, not an LLM**. This is not production software.
 Built from *DecisionFlow AI Production Specification v1.0 (DFA-PRD-002)* and the 8-screen mockup set.
 Gap review and closure: [docs/GAP_CLOSURE.md](docs/GAP_CLOSURE.md).
 
+## What it does, and how
+
+A B2B request arrives as an email, PDF or chat message. Karsa walks it through six stages, each one a screen and each
+with a rule that can say no: **Intake → Requirements → Feasibility → Decision package → Approval → Execution.**
+
+<table>
+<tr>
+<td width="50%"><img src="docs/portfolio/screenshots/03-requirements-evidence.png" alt="Requirements with evidence"><br><sub><b>Requirements and evidence.</b> Every value links to its exact source text. "To be determined" becomes <i>Missing</i>; two budgets become <i>Conflicting</i>. Nothing is guessed.</sub></td>
+<td width="50%"><img src="docs/portfolio/screenshots/06-approval-review.png" alt="Approval review"><br><sub><b>Approval review.</b> The proposed decision, what changed since the previous version, the evidence behind it, and a SHA-256 snapshot the approval binds to.</sub></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/portfolio/screenshots/08-execution-unknown-outcome.png" alt="Execution with an unknown outcome"><br><sub><b>Execution and recovery.</b> When the sandbox tracker times out, the outcome is "unknown", blind retry is disabled, and the operator checks the target by idempotency key.</sub></td>
+<td width="50%"><img src="docs/portfolio/screenshots/10-evaluation-gate.png" alt="Evaluation lab showing a failed release gate"><br><sub><b>Evaluation lab.</b> The AI step is scored on a held-out set it was not tuned on. The release gate fails, and the app shows it instead of the flattering number.</sub></td>
+</tr>
+</table>
+
+| Feature | What it does | How it works |
+|---|---|---|
+| **Requirement extraction with evidence** | Turns the brief into reviewable requirements, each with its source quote, page or character range, and a status (confirmed, missing, conflicting). Flags prompt-injection attempts and unsupported claims. | Default extractor is a rule-based demo parser. An optional Claude provider (structured output, grounding check) is implemented but not run live. Quotes are slices of the stored source, so they cannot be invented. |
+| **Clarifications** | Records what the client said versus what an analyst noted. | Each answer needs a channel and a reference; the client's own words are labelled apart from analyst notes. |
+| **Deterministic pricing and feasibility** | Prices the deal, compares three scenarios and checks capacity. | Integer-rupiah formulas over versioned rate cards, with a calculation trace. Verified against 60 hand-computed prices. |
+| **Decision package** | One frozen document: summary, options, fit-gap against the service catalogue, margin-exception request, exports. | Saved as JSON with a SHA-256 hash. Any change creates a new version; a frozen package refuses edits. |
+| **Approval** | A commercial approver decides on the exact package; high-risk deals need two different approvers. | Approval stores the package hash and version, so a stale approval gets a 409. The person who created the case cannot approve it (separation of duties). |
+| **Controlled execution** | After approval, runs the follow-up work against a sandbox CRM and project tracker. | Each action needs its own authorization. Work goes through a transactional outbox and a worker with leases; writes are idempotent, so a retry never duplicates. An unknown outcome blocks blind retry until someone checks the target. |
+| **Exception queue** | Keeps failures visible until a person resolves them. | Escalate, resolve manually, cancel with a compensation list, or reopen. |
+| **n8n intake workflow** | Creates a draft case from an external request. | A webhook checks a shared secret and required fields, then calls the Karsa API with an idempotency key, retries with backoff and keeps a dead-letter queue. 9 of 9 scenario tests pass ([results](integrations/n8n/RESULTS.md)). It never auto-approves. |
+| **Audit** | A permanent record of who did what. | Append-only at the database level (triggers), with request IDs that match the server logs. |
+| **Evaluation lab** | Measures the AI step honestly. | A development split and a separate held-out split, a release gate, regressions and adjudication. Results so far: 24 of 24 on the cases the rules were written on, 1 of 36 on new ones, 21 of 50 after a rewrite; the gate fails ([report](docs/eval/EVAL_V2_RESULTS.md)). |
+
 ## What works
 
 | Area | Status |
