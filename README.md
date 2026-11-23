@@ -13,6 +13,16 @@ sources, reviewed by people, and only then executed against sandbox systems with
 fictional. The CRM and project tracker are **simulated sandboxes**. The default extractor is a **rule-based demo
 parser, not an LLM**. This is not production software.
 
+**Start here (for reviewers)**
+
+| If you want to see | Open |
+|---|---|
+| The business-analysis pack: BRD, 24 functional requirements, BPMN AS-IS and TO-BE, traceability, UAT report, change request | [docs/ba/](docs/ba/README.md) |
+| The held-out evaluation of the AI step, including the failed release gate | [docs/eval/EVAL_V2_RESULTS.md](docs/eval/EVAL_V2_RESULTS.md) |
+| The n8n intake workflow and its 9 scenario results | [integrations/n8n/](integrations/n8n/README.md) · [RESULTS.md](integrations/n8n/RESULTS.md) |
+| Screenshots of every screen | [docs/portfolio/screenshots/](docs/portfolio/screenshots/) |
+| The case study (what I built, what is not proven yet) | https://dzahyk.github.io/case-karsa.html |
+
 Built from *DecisionFlow AI Production Specification v1.0 (DFA-PRD-002)* and the 8-screen mockup set.
 Gap review and closure: [docs/GAP_CLOSURE.md](docs/GAP_CLOSURE.md).
 
